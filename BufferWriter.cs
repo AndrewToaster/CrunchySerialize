@@ -154,5 +154,10 @@ namespace CrunchySerialize
         {
             return _buffer.WrittenSpan;
         }
+
+        public ByteBuffer GetByteBuffer()
+        {
+            return new(_buffer.WrittenSpan);
+        }
     }
 }

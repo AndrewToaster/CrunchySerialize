@@ -2,6 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>AndrewToasterr</Authors>
+    <Description>A light-weight serialization engine</Description>
+    <Copyright>Copyright (c) 2021 AndrewToaster</Copyright>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/AndrewToaster/CrunchySerialize</RepositoryUrl>
+    <RepositoryType>Source</RepositoryType>
+    <PackageTags>c#,AndrewToasterr,Serialization,Lightweight</PackageTags>
+    <PackageReleaseNotes>Internal changes</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>1.0.0.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

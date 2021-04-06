@@ -15,7 +15,7 @@ namespace CrunchySerialize
         {
             BufferWriter writer = new();
             obj.Serialize(writer);
-            return new ByteBuffer(writer.GetByteSpan());
+            return writer.GetByteBuffer();
         }
 
         /*public static ByteBuffer Serialize(ISerializable obj)
