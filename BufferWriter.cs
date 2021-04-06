@@ -106,46 +106,80 @@ namespace CrunchySerialize
 
         public void WriteObject(object obj)
         {
-            switch (ReflectionHelper.GetSerializableType(obj.GetType()))
+            Type type = obj.GetType();
+            switch (ReflectionHelper.GetSerializableType(type))
             {
-                case SerializableType.Int:
+                case SerializableTypes.Int:
                     WriteInt((int)obj);
                     break;
 
-                case SerializableType.UInt:
+                case SerializableTypes.UInt:
                     WriteUInt((uint)obj);
                     break;
 
-                case SerializableType.Long:
+                case SerializableTypes.Long:
                     WriteLong((long)obj);
                     break;
 
-                case SerializableType.ULong:
+                case SerializableTypes.ULong:
                     WriteULong((ulong)obj);
                     break;
 
-                case SerializableType.Short:
+                case SerializableTypes.Short:
                     WriteShort((short)obj);
                     break;
 
-                case SerializableType.UShort:
+                case SerializableTypes.UShort:
                     WriteUShort((ushort)obj);
                     break;
 
-                case SerializableType.Byte:
+                case SerializableTypes.Byte:
                     WriteByte((byte)obj);
                     break;
 
-                case SerializableType.Char:
+                case SerializableTypes.Char:
                     WriteChar((char)obj);
                     break;
 
-                case SerializableType.Bool:
+                case SerializableTypes.Bool:
                     WriteBool((bool)obj);
                     break;
 
-                case SerializableType.String:
+                case SerializableTypes.String:
                     WriteString((string)obj);
+                    break;
+
+                case SerializableTypes.Enum:
+                    switch (ReflectionHelper.GetEnumType(type))
+                    {
+                        case IntegralTypes.Int:
+                            WriteInt((int)obj);
+                            break;
+
+                        case IntegralTypes.UInt:
+                            WriteUInt((uint)obj);
+                            break;
+
+                        case IntegralTypes.Long:
+                            WriteLong((long)obj);
+                            break;
+
+                        case IntegralTypes.ULong:
+                            WriteULong((ulong)obj);
+                            break;
+
+                        case IntegralTypes.Short:
+                            WriteShort((short)obj);
+                            break;
+
+                        case IntegralTypes.UShort:
+                            WriteUShort((ushort)obj);
+                            break;
+
+                        case IntegralTypes.Byte:
+                            WriteByte((byte)obj);
+                            break;
+                    }
                     break;
             }
         }

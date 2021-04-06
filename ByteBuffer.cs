@@ -82,6 +82,36 @@ namespace CrunchySerialize
             return new string(span);
         }
 
+        public T ReadEnum<T>() where T : Enum
+        {
+            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            {
+                IntegralTypes.Int => (T)(object)ReadInt(),
+                IntegralTypes.UInt => (T)(object)ReadUInt(),
+                IntegralTypes.Long => (T)(object)ReadLong(),
+                IntegralTypes.ULong => (T)(object)ReadULong(),
+                IntegralTypes.Short => (T)(object)ReadShort(),
+                IntegralTypes.UShort => (T)(object)ReadUShort(),
+                IntegralTypes.Byte => (T)(object)ReadByte(),
+                _ => default,
+            };
+        }
+
+        public T ReadEnum<T>() where T : Enum
+        {
+            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            {
+                IntegralTypes.Int => (T)(object)ReadInt(),
+                IntegralTypes.UInt => (T)(object)ReadUInt(),
+                IntegralTypes.Long => (T)(object)ReadLong(),
+                IntegralTypes.ULong => (T)(object)ReadULong(),
+                IntegralTypes.Short => (T)(object)ReadShort(),
+                IntegralTypes.UShort => (T)(object)ReadUShort(),
+                IntegralTypes.Byte => (T)(object)ReadByte(),
+                _ => default,
+            };
+        }
+
         #endregion Read And Advance
 
         #region Peek and Stay
@@ -131,6 +161,36 @@ namespace CrunchySerialize
             return BitConverter.ToBoolean(PeekData(sizeof(bool)));
         }
 
+        public T PeekEnum<T>() where T : Enum
+        {
+            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            {
+                IntegralTypes.Int => (T)(object)PeekInt(),
+                IntegralTypes.UInt => (T)(object)PeekUInt(),
+                IntegralTypes.Long => (T)(object)PeekLong(),
+                IntegralTypes.ULong => (T)(object)PeekULong(),
+                IntegralTypes.Short => (T)(object)PeekShort(),
+                IntegralTypes.UShort => (T)(object)PeekUShort(),
+                IntegralTypes.Byte => (T)(object)PeekByte(),
+                _ => default,
+            };
+        }
+
+        public Enum PeekEnum(Type type)
+        {
+            return ReflectionHelper.GetEnumType(type) switch
+            {
+                IntegralTypes.Int => (Enum)(object)PeekInt(),
+                IntegralTypes.UInt => (Enum)(object)PeekUInt(),
+                IntegralTypes.Long => (Enum)(object)PeekLong(),
+                IntegralTypes.ULong => (Enum)(object)PeekULong(),
+                IntegralTypes.Short => (Enum)(object)PeekShort(),
+                IntegralTypes.UShort => (Enum)(object)PeekUShort(),
+                IntegralTypes.Byte => (Enum)(object)PeekByte(),
+                _ => default,
+            };
+        }
+
         public string PeekString()
         {
             int len = PeekInt();
@@ -148,16 +208,17 @@ namespace CrunchySerialize
         {
             return ReflectionHelper.GetSerializableType(type) switch
             {
-                SerializableType.Int => ReadInt(),
-                SerializableType.UInt => ReadUInt(),
-                SerializableType.Long => ReadLong(),
-                SerializableType.ULong => ReadULong(),
-                SerializableType.Short => ReadShort(),
-                SerializableType.UShort => ReadUShort(),
-                SerializableType.Byte => ReadByte(),
-                SerializableType.Char => ReadChar(),
-                SerializableType.Bool => ReadBool(),
-                SerializableType.String => ReadString(),
+                SerializableTypes.Int => ReadInt(),
+                SerializableTypes.UInt => ReadUInt(),
+                SerializableTypes.Long => ReadLong(),
+                SerializableTypes.ULong => ReadULong(),
+                SerializableTypes.Short => ReadShort(),
+                SerializableTypes.UShort => ReadUShort(),
+                SerializableTypes.Byte => ReadByte(),
+                SerializableTypes.Char => ReadChar(),
+                SerializableTypes.Bool => ReadBool(),
+                SerializableTypes.String => ReadString(),
+                SerializableTypes.Enum => ReadEnum<Enum>(),
                 _ => null,
             };
         }

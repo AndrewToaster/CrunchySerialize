@@ -31,18 +31,18 @@ namespace CrunchySerialize
             T obj = (T)FormatterServices.GetUninitializedObject(type);
             SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
 
-            if (attr != null && attr.Hint != DeserializeConstructorHint.Ignore)
+            if (attr != null && attr.Hint != ConstructorHint.Ignore)
             {
                 switch (attr.Hint)
                 {
-                    case DeserializeConstructorHint.DefaultPostInit:
+                    case ConstructorHint.DefaultPostInit:
                         {
                             obj.Deserialize(buffer);
                             type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
                         }
                         break;
 
-                    case DeserializeConstructorHint.DefaultPreInit:
+                    case ConstructorHint.DefaultPreInit:
                         {
                             type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
                             obj.Deserialize(buffer);
@@ -63,18 +63,18 @@ namespace CrunchySerialize
             ISerializable obj = (ISerializable)FormatterServices.GetUninitializedObject(type);
             SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
 
-            if (attr != null && attr.Hint != DeserializeConstructorHint.Ignore)
+            if (attr != null && attr.Hint != ConstructorHint.Ignore)
             {
                 switch (attr.Hint)
                 {
-                    case DeserializeConstructorHint.DefaultPostInit:
+                    case ConstructorHint.DefaultPostInit:
                         {
                             obj.Deserialize(buffer);
                             type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
                         }
                         break;
 
-                    case DeserializeConstructorHint.DefaultPreInit:
+                    case ConstructorHint.DefaultPreInit:
                         {
                             type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
                             obj.Deserialize(buffer);

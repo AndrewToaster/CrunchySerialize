@@ -8,28 +8,35 @@ namespace CrunchySerialize.Utility
 {
     public static class ReflectionHelper
     {
-        public static readonly Dictionary<Type, SerializableType> SerializableStructs = new()
+        private static readonly Dictionary<Type, SerializableTypes> SerializableStructs = new()
         {
-            { typeof(int), SerializableType.Int },
-            { typeof(uint), SerializableType.UInt },
-            { typeof(long), SerializableType.Long },
-            { typeof(ulong), SerializableType.ULong },
-            { typeof(short), SerializableType.Short },
-            { typeof(ushort), SerializableType.UShort },
-            { typeof(byte), SerializableType.Byte },
-            { typeof(char), SerializableType.Char },
-            { typeof(bool), SerializableType.Bool },
-            { typeof(string), SerializableType.String }
+            { typeof(int), SerializableTypes.Int },
+            { typeof(uint), SerializableTypes.UInt },
+            { typeof(long), SerializableTypes.Long },
+            { typeof(ulong), SerializableTypes.ULong },
+            { typeof(short), SerializableTypes.Short },
+            { typeof(ushort), SerializableTypes.UShort },
+            { typeof(byte), SerializableTypes.Byte },
+            { typeof(char), SerializableTypes.Char },
+            { typeof(bool), SerializableTypes.Bool },
+            { typeof(string), SerializableTypes.String },
+            { typeof(Enum), SerializableTypes.Enum }
         };
 
-        public static bool IsSerializableStruct(Type type)
+        public static bool IsSerializableType(Type type)
         {
             return SerializableStructs.ContainsKey(type);
         }
 
-        public static SerializableType GetSerializableType(Type type)
+        public static SerializableTypes GetSerializableType(Type type)
         {
             return SerializableStructs[type];
+        }
+
+        public static IntegralTypes GetEnumType(Type type)
+        {
+            // Works as long as index stay same as in SerializableTypes
+            return (IntegralTypes)SerializableStructs[type.GetEnumUnderlyingType()];
         }
 
         public static bool IsISerializable(Type type)

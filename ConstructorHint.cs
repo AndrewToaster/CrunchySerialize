@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CrunchySerialize
 {
-    public enum DeserializeConstructorHint
+    public enum ConstructorHint
     {
-        Ignore = 0,
-        DefaultPreInit = 1,
-        DefaultPostInit = 2
+        Ignore,
+        DefaultPreInit,
+        DefaultPostInit
     }
 }
