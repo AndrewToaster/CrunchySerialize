@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using CrunchySerialize.Utility;
+
+namespace CrunchySerialize
+{
+    public static class Serializator
+    {
+        public static ByteBuffer Serialize<T>(T obj) where T : ISerializable
+        {
+            BufferWriter writer = new();
+            obj.Serialize(writer);
+            return new ByteBuffer(writer.GetByteSpan());
+        }
+
+        /*public static ByteBuffer Serialize(ISerializable obj)
+        {
+            BufferWriter writer = new();
+            obj.Serialize(writer);
+            return new ByteBuffer(writer.GetByteSpan());
+        }*/
+
+        public static T Deserialize<T>(ByteBuffer buffer) where T : ISerializable
+        {
+            Type type = typeof(T);
+            T obj = (T)FormatterServices.GetUninitializedObject(type);
+            SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
+
+            if (attr != null && attr.Hint != DeserializeConstructorHint.Ignore)
+            {
+                switch (attr.Hint)
+                {
+                    case DeserializeConstructorHint.DefaultPostInit:
+                        {
+                            obj.Deserialize(buffer);
+                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
+                        }
+                        break;
+
+                    case DeserializeConstructorHint.DefaultPreInit:
+                        {
+                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
+                            obj.Deserialize(buffer);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                obj.Deserialize(buffer);
+            }
+
+            return obj;
+        }
+
+        public static object Deserialize(Type type, ByteBuffer buffer)
+        {
+            ISerializable obj = (ISerializable)FormatterServices.GetUninitializedObject(type);
+            SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
+
+            if (attr != null && attr.Hint != DeserializeConstructorHint.Ignore)
+            {
+                switch (attr.Hint)
+                {
+                    case DeserializeConstructorHint.DefaultPostInit:
+                        {
+                            obj.Deserialize(buffer);
+                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
+                        }
+                        break;
+
+                    case DeserializeConstructorHint.DefaultPreInit:
+                        {
+                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
+                            obj.Deserialize(buffer);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                obj.Deserialize(buffer);
+            }
+
+            return obj;
+        }
+    }
+}
