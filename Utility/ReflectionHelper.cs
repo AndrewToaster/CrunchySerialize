@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CrunchySerialize.Attributes;
 
 namespace CrunchySerialize.Utility
 {
@@ -51,6 +52,11 @@ namespace CrunchySerialize.Utility
             {
                 return ConstructorHint.None;
             }
+        }
+
+        public static bool HasAttribute<T>(this Type type) where T : Attribute
+        {
+            return type.GetCustomAttribute<T>() != null;
         }
 
         public static ConstructorInfo GetDefaultCtor(Type type)

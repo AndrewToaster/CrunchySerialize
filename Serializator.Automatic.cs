@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using CrunchySerialize.Attributes;
 using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
@@ -78,6 +79,9 @@ namespace CrunchySerialize
 
                 foreach (var field in type.GetFields())
                 {
+                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                        continue;
+
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
                         field.SetValue(obj, buffer.ReadObject(field.FieldType));
@@ -93,7 +97,9 @@ namespace CrunchySerialize
                 }
                 foreach (var prop in type.GetProperties())
                 {
-                    object propValue = prop.GetValue(obj);
+                    if (prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
+                        continue;
+
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
                         prop.SetValue(obj, buffer.ReadObject(prop.PropertyType));
