@@ -8,6 +8,8 @@ namespace CrunchySerialize
 {
     public class ByteBuffer : IDisposable
     {
+        public int Length { get => _buffer.Memory.Length; }
+
         private readonly IMemoryOwner<byte> _buffer;
         private int _position;
 
@@ -233,19 +235,24 @@ namespace CrunchySerialize
 
         #endregion Peek and Stay
 
-        public static ByteBuffer FromCompressed(DeflateStream compressed)
+        #region Compression
+
+        public static ByteBuffer FromCompressed(byte[] compressed)
         {
-            MemoryStream stream = new();
-            compressed.CopyTo(stream);
-            return new ByteBuffer(stream.ToArray());
+            return new ByteBuffer(CompressionHelper.Decompress(compressed));
         }
 
-        public DeflateStream CompressData(CompressionLevel compression = CompressionLevel.Optimal)
+        public static ByteBuffer FromCompressed(ReadOnlySpan<byte> compressed)
         {
-            DeflateStream stream = new(new MemoryStream(), compression);
-            stream.Write(_buffer.Memory.Span);
-            return stream;
+            return new ByteBuffer(CompressionHelper.Decompress(compressed));
         }
+
+        public ReadOnlySpan<byte> CompressData(CompressionLevel compression = CompressionLevel.Optimal)
+        {
+            return CompressionHelper.Compress(_buffer.Memory.Span, compression);
+        }
+
+        #endregion Compression
 
         public void Dispose()
         {

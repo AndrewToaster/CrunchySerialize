@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using CrunchySerialize.Attributes;
 using CrunchySerialize.Utility;
@@ -32,7 +34,7 @@ namespace CrunchySerialize
                     return;
 
                 Type type = obj.GetType();
-                foreach (var field in type.GetFields())
+                foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
                     if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
@@ -51,9 +53,9 @@ namespace CrunchySerialize
                         SerializeIntoWriter(fieldValue, writer, depth - 1);
                     }
                 }
-                foreach (var prop in type.GetProperties())
+                foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
-                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                    if (prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
 
                     object propValue = prop.GetValue(obj);
@@ -83,7 +85,7 @@ namespace CrunchySerialize
                 if (hint == ConstructorHint.BeforeAssignment)
                     ReflectionHelper.InvokeDefaultConstructor(obj);
 
-                foreach (var field in type.GetFields())
+                foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
                     if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
@@ -101,7 +103,7 @@ namespace CrunchySerialize
                         field.SetValue(obj, DeserializeFromBuffer(field.FieldType, buffer, depth - 1));
                     }
                 }
-                foreach (var prop in type.GetProperties())
+                foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
                     if (prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
