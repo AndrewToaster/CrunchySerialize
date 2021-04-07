@@ -1,5 +1,8 @@
 ﻿namespace CrunchySerialize
 {
+    /// <summary>
+    /// Enumeration class containing integral types
+    /// </summary>
     public enum IntegralTypes : byte
     {
         Int = SerializableTypes.Int,

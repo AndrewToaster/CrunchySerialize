@@ -4,8 +4,17 @@ using System.IO;
 
 namespace CrunchySerialize.Utility
 {
+    /// <summary>
+    /// Helper class used to compress and decompress <see cref="byte"/> arrays
+    /// </summary>
     public static class CompressionHelper
     {
+        /// <summary>
+        /// Compressed the given <see cref="byte"/> array
+        /// </summary>
+        /// <param name="data">The data to compress</param>
+        /// <param name="level">The level of compression</param>
+        /// <returns>Compressed <see cref="byte"/> array</returns>
         public static byte[] Compress(byte[] data, CompressionLevel level)
         {
             using MemoryStream output = new();
@@ -16,6 +25,12 @@ namespace CrunchySerialize.Utility
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Compressed the given <see cref="byte"/> array
+        /// </summary>
+        /// <param name="data">The data to compress</param>
+        /// <param name="level">The level of compression</param>
+        /// <returns>Compressed <see cref="byte"/> array</returns>
         public static ReadOnlySpan<byte> Compress(ReadOnlySpan<byte> data, CompressionLevel level)
         {
             using MemoryStream output = new();
@@ -26,6 +41,11 @@ namespace CrunchySerialize.Utility
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Decompressed the given <see cref="byte"/> array
+        /// </summary>
+        /// <param name="data">The data to decompress</param>
+        /// <returns>Decompressed <see cref="byte"/> array</returns>
         public static byte[] Decompress(byte[] data)
         {
             using MemoryStream input = new(data);
@@ -37,6 +57,11 @@ namespace CrunchySerialize.Utility
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Decompressed the given <see cref="byte"/> array
+        /// </summary>
+        /// <param name="data">The data to decompress</param>
+        /// <returns>Decompressed <see cref="byte"/> array</returns>
         public static ReadOnlySpan<byte> Decompress(ReadOnlySpan<byte> data)
         {
             using MemoryStream input = new(data.ToArray());

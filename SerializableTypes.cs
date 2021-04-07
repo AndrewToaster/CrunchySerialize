@@ -1,5 +1,8 @@
 ﻿namespace CrunchySerialize
 {
+    /// <summary>
+    /// Enumeration class containing all serializable types
+    /// </summary>
     public enum SerializableTypes : byte
     {
         Int = 0,

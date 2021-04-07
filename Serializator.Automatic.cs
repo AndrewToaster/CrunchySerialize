@@ -7,10 +7,23 @@ using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
+    /// <summary>
+    /// Class containing functionality for Serializing (into bytes) and Deserializing (from bytes)
+    /// </summary>
     public static partial class Serializator
     {
+        /// <summary>
+        /// Section of <see cref="Serializator"/> that uses reflection to serialize primitives and <see cref="ISerializable"/> instances
+        /// </summary>
         public static class Automatic
         {
+            /// <summary>
+            /// Serializes a object into <see cref="ByteBuffer"/>
+            /// </summary>
+            /// <typeparam name="T">The generic type</typeparam>
+            /// <param name="obj">The object to serialize</param>
+            /// <param name="depth">The depth of search for serializable members</param>
+            /// <returns><see cref="ByteBuffer"/> containing the serialized object</returns>
             public static ByteBuffer Serialize<T>(T obj, int depth = -1)
             {
                 ByteWriter writer = new();
@@ -18,11 +31,31 @@ namespace CrunchySerialize
                 return writer.GetByteBuffer();
             }
 
+            /// <summary>
+            /// Deserializes a <see cref="ByteBuffer"/> into a object
+            /// </summary>
+            /// <remarks>
+            /// <see cref="ByteBuffer"/> <paramref name="buffer"/> is not disposed of!
+            /// </remarks>
+            /// <param name="type">The type of object to deserialize into</param>
+            /// <param name="buffer">The <see cref="ByteBuffer"/> to read data from</param>
+            /// <param name="depth">The depth of search for deserializable members</param>
+            /// <returns>Serialized object</returns>
             public static object Deserialize(Type type, ByteBuffer buffer, int depth = -1)
             {
                 return DeserializeFromBuffer(type, buffer, depth);
             }
 
+            /// <summary>
+            /// Deserializes a <see cref="ByteBuffer"/> into a generic object
+            /// </summary>
+            /// <remarks>
+            /// <see cref="ByteBuffer"/> <paramref name="buffer"/> is not disposed of!
+            /// </remarks>
+            /// <typeparam name="T">The generic type</typeparam>
+            /// <param name="buffer">The <see cref="ByteBuffer"/> to read data from</param>
+            /// <param name="depth">The depth of search for deserializable members</param>
+            /// <returns>Serialized object <typeparamref name="T"/></returns>
             public static T Deserialize<T>(ByteBuffer buffer, int depth = -1)
             {
                 return (T)DeserializeFromBuffer(typeof(T), buffer, depth);

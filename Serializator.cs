@@ -10,8 +10,17 @@ using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
+    /// <summary>
+    /// Class containing functionality for Serializing (into bytes) and Deserializing (from bytes)
+    /// </summary>
     public static partial class Serializator
     {
+        /// <summary>
+        /// Serializes a object into <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <typeparam name="T">The generic type</typeparam>
+        /// <param name="obj">The object to serialize</param>
+        /// <returns><see cref="ByteBuffer"/> containing the serialized object</returns>
         public static ByteBuffer Serialize<T>(T obj) where T : ISerializable
         {
             ByteWriter writer = new();
@@ -19,6 +28,13 @@ namespace CrunchySerialize
             return writer.GetByteBuffer();
         }
 
+        /// <summary>
+        /// Deserializes a <see cref="ByteBuffer"/> into a generic object
+        /// </summary>
+        /// <see cref="ByteBuffer"/> <paramref name="buffer"/> is not disposed of!
+        /// <typeparam name="T">The generic type</typeparam>
+        /// <param name="buffer">The <see cref="ByteBuffer"/> to read data from</param>
+        /// <returns>Serialized object <typeparamref name="T"/></returns>
         public static T Deserialize<T>(ByteBuffer buffer) where T : ISerializable
         {
             Type type = typeof(T);
@@ -48,6 +64,15 @@ namespace CrunchySerialize
             return obj;
         }
 
+        /// <summary>
+        /// Deserializes a <see cref="ByteBuffer"/> into a object
+        /// </summary>
+        /// <remarks>
+        /// <see cref="ByteBuffer"/> <paramref name="buffer"/> is not disposed of!
+        /// </remarks>
+        /// <param name="type">The type of object to deserialize into</param>
+        /// <param name="buffer">The <see cref="ByteBuffer"/> to read data from</param>
+        /// <returns>Serialized object</returns>
         public static object Deserialize(Type type, ByteBuffer buffer)
         {
             if (!typeof(ISerializable).IsAssignableFrom(type))
