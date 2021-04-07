@@ -97,17 +97,17 @@ namespace CrunchySerialize
             };
         }
 
-        public T ReadEnum<T>() where T : Enum
+        public Enum ReadEnum(Type type)
         {
-            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            return ReflectionHelper.GetEnumType(type) switch
             {
-                IntegralTypes.Int => (T)(object)ReadInt(),
-                IntegralTypes.UInt => (T)(object)ReadUInt(),
-                IntegralTypes.Long => (T)(object)ReadLong(),
-                IntegralTypes.ULong => (T)(object)ReadULong(),
-                IntegralTypes.Short => (T)(object)ReadShort(),
-                IntegralTypes.UShort => (T)(object)ReadUShort(),
-                IntegralTypes.Byte => (T)(object)ReadByte(),
+                IntegralTypes.Int => (Enum)(object)ReadInt(),
+                IntegralTypes.UInt => (Enum)(object)ReadUInt(),
+                IntegralTypes.Long => (Enum)(object)ReadLong(),
+                IntegralTypes.ULong => (Enum)(object)ReadULong(),
+                IntegralTypes.Short => (Enum)(object)ReadShort(),
+                IntegralTypes.UShort => (Enum)(object)ReadUShort(),
+                IntegralTypes.Byte => (Enum)(object)ReadByte(),
                 _ => default,
             };
         }
