@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
@@ -21,30 +22,26 @@ namespace CrunchySerialize
         {
             Type type = typeof(T);
             T obj = (T)FormatterServices.GetUninitializedObject(type);
-            SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
 
-            if (attr != null && attr.Hint != ConstructorHint.Ignore)
+            switch (ReflectionHelper.GetCtorHint(type))
             {
-                switch (attr.Hint)
-                {
-                    case ConstructorHint.DefaultPostInit:
-                        {
-                            obj.Deserialize(buffer);
-                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
-                        }
-                        break;
+                case ConstructorHint.AfterAssignment:
+                    {
+                        obj.Deserialize(buffer);
+                        ReflectionHelper.InvokeDefaultConstructor(obj);
+                    }
+                    break;
 
-                    case ConstructorHint.DefaultPreInit:
-                        {
-                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
-                            obj.Deserialize(buffer);
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                obj.Deserialize(buffer);
+                case ConstructorHint.BeforeAssignment:
+                    {
+                        ReflectionHelper.InvokeDefaultConstructor(obj);
+                        obj.Deserialize(buffer);
+                    }
+                    break;
+
+                case ConstructorHint.None:
+                    obj.Deserialize(buffer);
+                    break;
             }
 
             return obj;
@@ -53,30 +50,26 @@ namespace CrunchySerialize
         public static object Deserialize(Type type, ByteBuffer buffer)
         {
             ISerializable obj = (ISerializable)FormatterServices.GetUninitializedObject(type);
-            SerializationHintAttribute attr = type.GetCustomAttribute<SerializationHintAttribute>();
 
-            if (attr != null && attr.Hint != ConstructorHint.Ignore)
+            switch (ReflectionHelper.GetCtorHint(type))
             {
-                switch (attr.Hint)
-                {
-                    case ConstructorHint.DefaultPostInit:
-                        {
-                            obj.Deserialize(buffer);
-                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
-                        }
-                        break;
+                case ConstructorHint.AfterAssignment:
+                    {
+                        obj.Deserialize(buffer);
+                        ReflectionHelper.InvokeDefaultConstructor(obj);
+                    }
+                    break;
 
-                    case ConstructorHint.DefaultPreInit:
-                        {
-                            type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
-                            obj.Deserialize(buffer);
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                obj.Deserialize(buffer);
+                case ConstructorHint.BeforeAssignment:
+                    {
+                        ReflectionHelper.InvokeDefaultConstructor(obj);
+                        obj.Deserialize(buffer);
+                    }
+                    break;
+
+                case ConstructorHint.None:
+                    obj.Deserialize(buffer);
+                    break;
             }
 
             return obj;

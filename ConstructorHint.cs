@@ -8,8 +8,8 @@ namespace CrunchySerialize
 {
     public enum ConstructorHint
     {
-        Ignore,
-        DefaultPreInit,
-        DefaultPostInit
+        None,
+        BeforeAssignment,
+        AfterAssignment
     }
 }

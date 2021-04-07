@@ -12,6 +12,11 @@ namespace CrunchySerialize
             {
                 Type type = obj.GetType();
                 ByteWriter writer = new();
+
+                ConstructorHint hint = ReflectionHelper.GetCtorHint(type);
+                if (hint == ConstructorHint.BeforeAssignment)
+                    ReflectionHelper.InvokeDefaultConstructor(obj);
+
                 foreach (var field in type.GetFields())
                 {
                     if (ReflectionHelper.IsSerializableType(type))
@@ -35,12 +40,20 @@ namespace CrunchySerialize
                     }
                 }
 
+                if (hint == ConstructorHint.AfterAssignment)
+                    ReflectionHelper.InvokeDefaultConstructor(obj);
+
                 return writer.GetByteBuffer();
             }
 
             public static object Deserialize(Type type, ByteBuffer buffer)
             {
                 object obj = FormatterServices.GetUninitializedObject(type);
+
+                ConstructorHint hint = ReflectionHelper.GetCtorHint(type);
+                if (hint == ConstructorHint.BeforeAssignment)
+                    ReflectionHelper.InvokeDefaultConstructor(obj);
+
                 foreach (var field in type.GetFields())
                 {
                     if (ReflectionHelper.IsSerializableType(type))
@@ -63,6 +76,9 @@ namespace CrunchySerialize
                         ((ISerializable)prop.GetValue(obj)).Deserialize(buffer);
                     }
                 }
+
+                if (hint == ConstructorHint.AfterAssignment)
+                    ReflectionHelper.InvokeDefaultConstructor(obj);
 
                 return obj;
             }

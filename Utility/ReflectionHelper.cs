@@ -49,13 +49,18 @@ namespace CrunchySerialize.Utility
             }
             else
             {
-                return ConstructorHint.Ignore;
+                return ConstructorHint.None;
             }
         }
 
-        public static ConstructorInfo GetDefaultConstructor(Type type)
+        public static ConstructorInfo GetDefaultCtor(Type type)
         {
             return type.GetConstructor(Type.EmptyTypes);
+        }
+
+        public static void InvokeDefaultConstructor(object obj)
+        {
+            obj.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(obj, null);
         }
 
         public static bool IsISerializable(Type type)
