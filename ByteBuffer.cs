@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Buffers;
+using System.IO;
+using System.IO.Compression;
 using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
@@ -18,6 +20,12 @@ namespace CrunchySerialize
         {
             _buffer = MemoryPool<byte>.Shared.Rent(data.Length);
             data.ToArray().CopyTo(_buffer.Memory);
+        }
+
+        public ByteBuffer(byte[] data)
+        {
+            _buffer = MemoryPool<byte>.Shared.Rent(data.Length);
+            data.CopyTo(_buffer.Memory);
         }
 
         #region Read And Advance
@@ -224,6 +232,20 @@ namespace CrunchySerialize
         }
 
         #endregion Peek and Stay
+
+        public static ByteBuffer FromCompressed(DeflateStream compressed)
+        {
+            MemoryStream stream = new();
+            compressed.CopyTo(stream);
+            return new ByteBuffer(stream.ToArray());
+        }
+
+        public DeflateStream CompressData(CompressionLevel compression = CompressionLevel.Optimal)
+        {
+            DeflateStream stream = new(new MemoryStream(), compression);
+            stream.Write(_buffer.Memory.Span);
+            return stream;
+        }
 
         public void Dispose()
         {
