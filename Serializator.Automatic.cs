@@ -46,6 +46,11 @@ namespace CrunchySerialize
                 return writer.GetByteBuffer();
             }
 
+            public static ByteBuffer Serialize<T>(T obj)
+            {
+                return Serialize(obj);
+            }
+
             public static object Deserialize(Type type, ByteBuffer buffer)
             {
                 object obj = FormatterServices.GetUninitializedObject(type);
