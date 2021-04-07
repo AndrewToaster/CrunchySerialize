@@ -8,7 +8,7 @@ namespace CrunchySerialize
 {
     public interface ISerializable
     {
-        void Serialize(BufferWriter writer);
+        void Serialize(ByteWriter writer);
 
         void Deserialize(ByteBuffer data);
     }

@@ -6,16 +6,16 @@ using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
-    public class BufferWriter
+    public class ByteWriter
     {
         private readonly ArrayBufferWriter<byte> _buffer;
 
-        public BufferWriter()
+        public ByteWriter()
         {
             _buffer = new ArrayBufferWriter<byte>();
         }
 
-        public BufferWriter(Span<byte> data)
+        public ByteWriter(Span<byte> data)
         {
             _buffer = new ArrayBufferWriter<byte>(data.Length);
             _buffer.Write(data);

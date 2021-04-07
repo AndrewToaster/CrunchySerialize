@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace CrunchySerialize.Utility
 {
     public static class ReflectionHelper
     {
-        private static readonly Dictionary<Type, SerializableTypes> SerializableStructs = new()
+        private static readonly Dictionary<Type, SerializableTypes> TypeDictionary = new()
         {
             { typeof(int), SerializableTypes.Int },
             { typeof(uint), SerializableTypes.UInt },
@@ -25,18 +26,36 @@ namespace CrunchySerialize.Utility
 
         public static bool IsSerializableType(Type type)
         {
-            return SerializableStructs.ContainsKey(type);
+            return TypeDictionary.ContainsKey(type) || type.IsEnum;
         }
 
         public static SerializableTypes GetSerializableType(Type type)
         {
-            return SerializableStructs[type];
+            return type.IsEnum ? SerializableTypes.Enum : TypeDictionary[type];
         }
 
         public static IntegralTypes GetEnumType(Type type)
         {
             // Works as long as index stay same as in SerializableTypes
-            return (IntegralTypes)SerializableStructs[type.GetEnumUnderlyingType()];
+            return (IntegralTypes)TypeDictionary[type.GetEnumUnderlyingType()];
+        }
+
+        public static ConstructorHint GetCtorHint(Type type)
+        {
+            SerializationHintAttribute attribute = type.GetCustomAttribute<SerializationHintAttribute>();
+            if (attribute != null)
+            {
+                return attribute.Hint;
+            }
+            else
+            {
+                return ConstructorHint.Ignore;
+            }
+        }
+
+        public static ConstructorInfo GetDefaultConstructor(Type type)
+        {
+            return type.GetConstructor(Type.EmptyTypes);
         }
 
         public static bool IsISerializable(Type type)

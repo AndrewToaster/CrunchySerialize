@@ -5,15 +5,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
-    public static class Serializator
+    public static partial class Serializator
     {
         public static ByteBuffer Serialize<T>(T obj) where T : ISerializable
         {
-            BufferWriter writer = new();
+            ByteWriter writer = new();
             obj.Serialize(writer);
             return writer.GetByteBuffer();
         }

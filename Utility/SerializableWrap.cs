@@ -8,16 +8,16 @@ namespace CrunchySerialize.Utility
 {
     public class SerializableWrap<T> : ISerializable
     {
-        public Action<BufferWriter> SerializeDelegate { get; }
+        public Action<ByteWriter> SerializeDelegate { get; }
         public Action<ByteBuffer> DeserializeDelegate { get; }
 
-        public SerializableWrap(Action<BufferWriter> serialize, Action<ByteBuffer> deserialize)
+        public SerializableWrap(Action<ByteWriter> serialize, Action<ByteBuffer> deserialize)
         {
             SerializeDelegate = serialize;
             DeserializeDelegate = deserialize;
         }
 
-        public void Serialize(BufferWriter writer)
+        public void Serialize(ByteWriter writer)
         {
             SerializeDelegate.Invoke(writer);
         }
