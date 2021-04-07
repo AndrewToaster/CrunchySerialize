@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Buffers;
-using System.IO;
 using System.IO.Compression;
 using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
 {
-    public class ByteBuffer : IDisposable
+    public sealed class ByteBuffer : IDisposable
     {
         public int Length { get => _buffer.Memory.Length; }
 
