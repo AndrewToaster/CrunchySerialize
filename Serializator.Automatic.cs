@@ -34,6 +34,9 @@ namespace CrunchySerialize
                 Type type = obj.GetType();
                 foreach (var field in type.GetFields())
                 {
+                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                        continue;
+
                     object fieldValue = field.GetValue(obj);
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
@@ -50,6 +53,9 @@ namespace CrunchySerialize
                 }
                 foreach (var prop in type.GetProperties())
                 {
+                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                        continue;
+
                     object propValue = prop.GetValue(obj);
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
