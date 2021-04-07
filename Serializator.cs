@@ -17,13 +17,6 @@ namespace CrunchySerialize
             return writer.GetByteBuffer();
         }
 
-        /*public static ByteBuffer Serialize(ISerializable obj)
-        {
-            BufferWriter writer = new();
-            obj.Serialize(writer);
-            return new ByteBuffer(writer.GetByteSpan());
-        }*/
-
         public static T Deserialize<T>(ByteBuffer buffer) where T : ISerializable
         {
             Type type = typeof(T);
