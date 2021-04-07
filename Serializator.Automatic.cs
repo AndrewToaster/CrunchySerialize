@@ -8,51 +8,68 @@ namespace CrunchySerialize
     {
         public static class Automatic
         {
-            public static ByteBuffer Serialize(object obj)
+            public static ByteBuffer Serialize<T>(T obj, int depth = -1)
             {
-                Type type = obj.GetType();
                 ByteWriter writer = new();
+                SerializeIntoWriter(obj, writer, depth);
+                return writer.GetByteBuffer();
+            }
 
-                ConstructorHint hint = ReflectionHelper.GetCtorHint(type);
-                if (hint == ConstructorHint.BeforeAssignment)
-                    ReflectionHelper.InvokeDefaultConstructor(obj);
+            public static object Deserialize(Type type, ByteBuffer buffer, int depth = -1)
+            {
+                return DeserializeFromBuffer(type, buffer, depth);
+            }
 
+            public static T Deserialize<T>(ByteBuffer buffer, int depth = -1)
+            {
+                return (T)DeserializeFromBuffer(typeof(T), buffer, depth);
+            }
+
+            private static void SerializeIntoWriter(object obj, ByteWriter writer, int depth)
+            {
+                if (depth == 0)
+                    return;
+
+                Type type = obj.GetType();
                 foreach (var field in type.GetFields())
                 {
-                    if (ReflectionHelper.IsSerializableType(type))
+                    object fieldValue = field.GetValue(obj);
+                    if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
-                        writer.WriteObject(field.GetValue(obj));
+                        writer.WriteObject(fieldValue);
                     }
-                    else if (ReflectionHelper.IsISerializable(type))
+                    else if (ReflectionHelper.IsISerializable(field.FieldType))
                     {
-                        ((ISerializable)field.GetValue(obj)).Serialize(writer);
+                        ((ISerializable)fieldValue).Serialize(writer);
+                    }
+                    else
+                    {
+                        SerializeIntoWriter(fieldValue, writer, depth - 1);
                     }
                 }
                 foreach (var prop in type.GetProperties())
                 {
-                    if (ReflectionHelper.IsSerializableType(type))
+                    object propValue = prop.GetValue(obj);
+                    if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
-                        writer.WriteObject(prop.GetValue(obj));
+                        writer.WriteObject(propValue);
                     }
-                    else if (ReflectionHelper.IsISerializable(type))
+                    else if (ReflectionHelper.IsISerializable(prop.PropertyType))
                     {
-                        ((ISerializable)prop.GetValue(obj)).Serialize(writer);
+                        ((ISerializable)propValue).Serialize(writer);
+                    }
+                    else
+                    {
+                        SerializeIntoWriter(propValue, writer, depth - 1);
                     }
                 }
-
-                if (hint == ConstructorHint.AfterAssignment)
-                    ReflectionHelper.InvokeDefaultConstructor(obj);
-
-                return writer.GetByteBuffer();
             }
 
-            public static ByteBuffer Serialize<T>(T obj)
+            private static object DeserializeFromBuffer(Type type, ByteBuffer buffer, int depth)
             {
-                return Serialize(obj);
-            }
+                if (depth == 0)
+                    return null;
 
-            public static object Deserialize(Type type, ByteBuffer buffer)
-            {
                 object obj = FormatterServices.GetUninitializedObject(type);
 
                 ConstructorHint hint = ReflectionHelper.GetCtorHint(type);
@@ -61,24 +78,33 @@ namespace CrunchySerialize
 
                 foreach (var field in type.GetFields())
                 {
-                    if (ReflectionHelper.IsSerializableType(type))
+                    if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
                         field.SetValue(obj, buffer.ReadObject(field.FieldType));
                     }
-                    else if (ReflectionHelper.IsISerializable(type))
+                    else if (ReflectionHelper.IsISerializable(field.FieldType))
                     {
                         ((ISerializable)field.GetValue(obj)).Deserialize(buffer);
+                    }
+                    else
+                    {
+                        field.SetValue(obj, DeserializeFromBuffer(field.FieldType, buffer, depth - 1));
                     }
                 }
                 foreach (var prop in type.GetProperties())
                 {
-                    if (ReflectionHelper.IsSerializableType(type))
+                    object propValue = prop.GetValue(obj);
+                    if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
                         prop.SetValue(obj, buffer.ReadObject(prop.PropertyType));
                     }
-                    else if (ReflectionHelper.IsISerializable(type))
+                    else if (ReflectionHelper.IsISerializable(prop.PropertyType))
                     {
                         ((ISerializable)prop.GetValue(obj)).Deserialize(buffer);
+                    }
+                    else
+                    {
+                        prop.SetValue(obj, DeserializeFromBuffer(prop.PropertyType, buffer, depth - 1));
                     }
                 }
 
@@ -86,11 +112,6 @@ namespace CrunchySerialize
                     ReflectionHelper.InvokeDefaultConstructor(obj);
 
                 return obj;
-            }
-
-            public static T Deserialize<T>(ByteBuffer buffer)
-            {
-                return (T)Deserialize(typeof(T), buffer);
             }
         }
     }

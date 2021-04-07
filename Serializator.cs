@@ -49,6 +49,11 @@ namespace CrunchySerialize
 
         public static object Deserialize(Type type, ByteBuffer buffer)
         {
+            if (!typeof(ISerializable).IsAssignableFrom(type))
+            {
+                throw new ArgumentException($"The specified type does not inherit from {nameof(ISerializable)}", nameof(type));
+            }
+
             ISerializable obj = (ISerializable)FormatterServices.GetUninitializedObject(type);
 
             switch (ReflectionHelper.GetCtorHint(type))
