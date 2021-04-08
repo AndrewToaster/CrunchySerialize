@@ -11,8 +11,8 @@
     <PackageTags>c#,AndrewToasterr,Serialization,Lightweight</PackageTags>
     <PackageReleaseNotes>Excluded read-only members from serialization</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.1.0.2</Version>
-    <AssemblyVersion>1.1.0.21</AssemblyVersion>
+    <Version>1.1.0.3</Version>
+    <AssemblyVersion>1.1.0.3</AssemblyVersion>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
 
