@@ -18,7 +18,7 @@ namespace CrunchySerialize
         public static class Automatic
         {
             /// <summary>
-            /// Serializes a object into <see cref="ByteBuffer"/>
+            /// Serializes a object into a <see cref="ByteBuffer"/>
             /// </summary>
             /// <typeparam name="T">The generic type</typeparam>
             /// <param name="obj">The object to serialize</param>
@@ -27,8 +27,20 @@ namespace CrunchySerialize
             public static ByteBuffer Serialize<T>(T obj, int depth = -1)
             {
                 ByteWriter writer = new();
-                SerializeIntoWriter(obj, writer, depth);
+                _serializeIntoWriter(obj, writer, depth);
                 return writer.GetByteBuffer();
+            }
+
+            /// <summary>
+            /// Serializes a object into a <see cref="ByteWriter"/>
+            /// </summary>
+            /// <typeparam name="T">The generic type</typeparam>
+            /// <param name="obj">The object to serialize</param>
+            /// <param name="writer">The <see cref="ByteWriter"/> which to write into</param>
+            /// <param name="depth">The depth of search for serializable members</param>
+            public static void SerializeIntoWriter<T>(T obj, ByteWriter writer, int depth = -1) where T : ISerializable
+            {
+                SerializeIntoWriter(obj, writer, depth);
             }
 
             /// <summary>
@@ -43,7 +55,7 @@ namespace CrunchySerialize
             /// <returns>Serialized object</returns>
             public static object Deserialize(Type type, ByteBuffer buffer, int depth = -1)
             {
-                return DeserializeFromBuffer(type, buffer, depth);
+                return _deserializeFromBuffer(type, buffer, depth);
             }
 
             /// <summary>
@@ -58,10 +70,10 @@ namespace CrunchySerialize
             /// <returns>Serialized object <typeparamref name="T"/></returns>
             public static T Deserialize<T>(ByteBuffer buffer, int depth = -1)
             {
-                return (T)DeserializeFromBuffer(typeof(T), buffer, depth);
+                return (T)_deserializeFromBuffer(typeof(T), buffer, depth);
             }
 
-            private static void SerializeIntoWriter(object obj, ByteWriter writer, int depth)
+            private static void _serializeIntoWriter(object obj, ByteWriter writer, int depth)
             {
                 if (depth == 0)
                     return;
@@ -83,7 +95,7 @@ namespace CrunchySerialize
                     }
                     else
                     {
-                        SerializeIntoWriter(fieldValue, writer, depth - 1);
+                        _serializeIntoWriter(fieldValue, writer, depth - 1);
                     }
                 }
                 foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
@@ -102,12 +114,12 @@ namespace CrunchySerialize
                     }
                     else
                     {
-                        SerializeIntoWriter(propValue, writer, depth - 1);
+                        _serializeIntoWriter(propValue, writer, depth - 1);
                     }
                 }
             }
 
-            private static object DeserializeFromBuffer(Type type, ByteBuffer buffer, int depth)
+            private static object _deserializeFromBuffer(Type type, ByteBuffer buffer, int depth)
             {
                 if (depth == 0)
                     return null;
@@ -133,7 +145,7 @@ namespace CrunchySerialize
                     }
                     else
                     {
-                        field.SetValue(obj, DeserializeFromBuffer(field.FieldType, buffer, depth - 1));
+                        field.SetValue(obj, _deserializeFromBuffer(field.FieldType, buffer, depth - 1));
                     }
                 }
                 foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
@@ -151,7 +163,7 @@ namespace CrunchySerialize
                     }
                     else
                     {
-                        prop.SetValue(obj, DeserializeFromBuffer(prop.PropertyType, buffer, depth - 1));
+                        prop.SetValue(obj, _deserializeFromBuffer(prop.PropertyType, buffer, depth - 1));
                     }
                 }
 

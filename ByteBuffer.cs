@@ -15,6 +15,8 @@ namespace CrunchySerialize
         /// </summary>
         public int Length { get => _buffer.Memory.Length; }
 
+        public ByteWriter Writer { get; }
+
         private readonly IMemoryOwner<byte> _buffer;
         private int _position;
 

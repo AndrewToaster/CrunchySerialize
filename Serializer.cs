@@ -16,7 +16,7 @@ namespace CrunchySerialize
     public static partial class Serializer
     {
         /// <summary>
-        /// Serializes a object into <see cref="ByteBuffer"/>
+        /// Serializes a object into a <see cref="ByteBuffer"/>
         /// </summary>
         /// <typeparam name="T">The generic type</typeparam>
         /// <param name="obj">The object to serialize</param>
@@ -26,6 +26,17 @@ namespace CrunchySerialize
             ByteWriter writer = new();
             obj.Serialize(writer);
             return writer.GetByteBuffer();
+        }
+
+        /// <summary>
+        /// Serializes a object into a <see cref="ByteWriter"/>
+        /// </summary>
+        /// <typeparam name="T">The generic type</typeparam>
+        /// <param name="obj">The object to serialize</param>
+        /// <param name="writer">The <see cref="ByteWriter"/> which to write into</param>
+        public static void SerializeIntoWriter<T>(T obj, ByteWriter writer) where T : ISerializable
+        {
+            obj.Serialize(writer);
         }
 
         /// <summary>
