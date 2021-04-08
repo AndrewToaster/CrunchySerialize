@@ -10,10 +10,10 @@ namespace CrunchySerialize
     /// <summary>
     /// Class containing functionality for Serializing (into bytes) and Deserializing (from bytes)
     /// </summary>
-    public static partial class Serializator
+    public static partial class Serializer
     {
         /// <summary>
-        /// Section of <see cref="Serializator"/> that uses reflection to serialize primitives and <see cref="ISerializable"/> instances
+        /// Section of <see cref="Serializer"/> that uses reflection to serialize primitives and <see cref="ISerializable"/> instances
         /// </summary>
         public static class Automatic
         {
@@ -77,7 +77,7 @@ namespace CrunchySerialize
                     {
                         writer.WriteObject(fieldValue);
                     }
-                    else if (ReflectionHelper.IsISerializable(field.FieldType))
+                    else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
                         ((ISerializable)fieldValue).Serialize(writer);
                     }
@@ -96,7 +96,7 @@ namespace CrunchySerialize
                     {
                         writer.WriteObject(propValue);
                     }
-                    else if (ReflectionHelper.IsISerializable(prop.PropertyType))
+                    else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
                         ((ISerializable)propValue).Serialize(writer);
                     }
@@ -127,7 +127,7 @@ namespace CrunchySerialize
                     {
                         field.SetValue(obj, buffer.ReadObject(field.FieldType));
                     }
-                    else if (ReflectionHelper.IsISerializable(field.FieldType))
+                    else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
                         ((ISerializable)field.GetValue(obj)).Deserialize(buffer);
                     }
@@ -145,7 +145,7 @@ namespace CrunchySerialize
                     {
                         prop.SetValue(obj, buffer.ReadObject(prop.PropertyType));
                     }
-                    else if (ReflectionHelper.IsISerializable(prop.PropertyType))
+                    else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
                         ((ISerializable)prop.GetValue(obj)).Deserialize(buffer);
                     }

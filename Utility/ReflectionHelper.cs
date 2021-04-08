@@ -105,7 +105,7 @@ namespace CrunchySerialize.Utility
         /// Checks whether or not the <paramref name="type"/> implements <see cref="ISerializable"/> interface
         /// </summary>
         /// <param name="type">The type to check against</param>
-        public static bool IsISerializable(Type type)
+        public static bool ImplementsISerializable(Type type)
         {
             return typeof(ISerializable).IsAssignableFrom(type);
         }

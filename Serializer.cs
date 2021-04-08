@@ -13,7 +13,7 @@ namespace CrunchySerialize
     /// <summary>
     /// Class containing functionality for Serializing (into bytes) and Deserializing (from bytes)
     /// </summary>
-    public static partial class Serializator
+    public static partial class Serializer
     {
         /// <summary>
         /// Serializes a object into <see cref="ByteBuffer"/>
