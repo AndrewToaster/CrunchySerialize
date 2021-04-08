@@ -15,19 +15,8 @@ namespace CrunchySerialize
         /// </summary>
         public int Length { get => _buffer.Memory.Length; }
 
-        public ByteWriter Writer { get; }
-
         private readonly IMemoryOwner<byte> _buffer;
         private int _position;
-
-        /// <summary>
-        /// Creates a new empty instance of <see cref="ByteBuffer"/>
-        /// </summary>
-        [Obsolete("Please use the other constructor for ByteBuffer as there is now way to write data directly into it after construction")]
-        public ByteBuffer()
-        {
-            _buffer = MemoryPool<byte>.Shared.Rent();
-        }
 
         /// <summary>
         /// Create a new instance of <see cref="ByteBuffer"/> filled with <paramref name="data"/>
