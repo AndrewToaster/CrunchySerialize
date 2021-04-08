@@ -12,8 +12,8 @@
     <PackageReleaseNotes>Improved auto-serialization
 Changed some names</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.1.0.1</Version>
-    <AssemblyVersion>1.1.0.1</AssemblyVersion>
+    <Version>1.1.0.2</Version>
+    <AssemblyVersion>1.1.0.21</AssemblyVersion>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
 

@@ -69,7 +69,7 @@ namespace CrunchySerialize
                 Type type = obj.GetType();
                 foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
-                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                    if (field.IsInitOnly || field.FieldType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
 
                     object fieldValue = field.GetValue(obj);
@@ -88,7 +88,7 @@ namespace CrunchySerialize
                 }
                 foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
-                    if (prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
+                    if (!prop.CanWrite || !prop.CanRead || prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
 
                     object propValue = prop.GetValue(obj);
@@ -120,7 +120,7 @@ namespace CrunchySerialize
 
                 foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
-                    if (field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                    if (field.IsInitOnly || field.FieldType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
 
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
@@ -138,7 +138,7 @@ namespace CrunchySerialize
                 }
                 foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
                 {
-                    if (prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
+                    if (!prop.CanWrite || !prop.CanRead || prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
                         continue;
 
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
