@@ -4,8 +4,10 @@
 
 # How to use
 There are 2 ways to serialize / deserialize objects
+
 ## Using Intefaces
 The best way to ensure proper serialization is to use the `ISerializable` interface
+
 ### Example
 ```csharp
 public class StringData : ISerializable
@@ -36,9 +38,11 @@ And deserializing
 ```csharp
 StringData stringData = Serializator.Deserialize<StringData>(data);
 ```
+
 ## Using Reflection-based Automatic Serialization
 For those that don't want to write code for reading and writing from binary buffers can use automatic serialization.
 ## Example
+
 ```csharp
 public class IntData
 {
@@ -58,12 +62,16 @@ And deserializing
 ```csharp
 IntData intData = Serializator.Automatic.Deserialize<IntData>(data);
 ```
+
 ## How it works
 Reflection-based parsing works by getting all fields and properties and doing 3 things.
+
 ### If the type is a Natively Serializable
 This means that if the type is either a Primitive, Enum or String then we go ahead and write it into the buffer
+
 ### If the type implements `ISerializable`
 If the type implements `ISerializable` then we call `ISerializable.Serialize`
+
 ### None of the above
 If none of these are reached, then we serialize all fields and properites in the type depending on the given `depth` parameter.
 This is recursively done.
