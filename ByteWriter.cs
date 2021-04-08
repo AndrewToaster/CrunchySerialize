@@ -161,7 +161,7 @@ namespace CrunchySerialize
         /// Writes a <see cref="object"/> into the internal buffer depending on the <see cref="object"/>'s type
         /// </summary>
         /// <param name="obj">The <see cref="object"/> to write into the internal buffer</param>
-        public void WriteObject(object obj)
+        public void WritePrimitive(object obj)
         {
             Type type = obj.GetType();
             switch (ReflectionHelper.GetSerializableType(type))

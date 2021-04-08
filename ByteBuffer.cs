@@ -172,7 +172,7 @@ namespace CrunchySerialize
         /// Reads a object given the type <paramref name="type"/>
         /// </summary>
         /// <param name="type">The <see cref="Type"/> of the <see cref="object"/></param>
-        public object ReadObject(Type type)
+        public object ReadPrimitive(Type type)
         {
             return ReflectionHelper.GetSerializableType(type) switch
             {
@@ -325,7 +325,7 @@ namespace CrunchySerialize
         /// Peeks a object given the type <paramref name="type"/>
         /// </summary>
         /// <param name="type">The <see cref="Type"/> of the <see cref="object"/></param>
-        public object PeekObject(Type type)
+        public object PeekPrimitive(Type type)
         {
             return ReflectionHelper.GetSerializableType(type) switch
             {

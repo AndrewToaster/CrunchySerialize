@@ -87,7 +87,7 @@ namespace CrunchySerialize
                     object fieldValue = field.GetValue(obj);
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
-                        writer.WriteObject(fieldValue);
+                        writer.WritePrimitive(fieldValue);
                     }
                     else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
@@ -106,7 +106,7 @@ namespace CrunchySerialize
                     object propValue = prop.GetValue(obj);
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
-                        writer.WriteObject(propValue);
+                        writer.WritePrimitive(propValue);
                     }
                     else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
@@ -137,7 +137,7 @@ namespace CrunchySerialize
 
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
-                        field.SetValue(obj, buffer.ReadObject(field.FieldType));
+                        field.SetValue(obj, buffer.ReadPrimitive(field.FieldType));
                     }
                     else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
@@ -155,7 +155,7 @@ namespace CrunchySerialize
 
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
-                        prop.SetValue(obj, buffer.ReadObject(prop.PropertyType));
+                        prop.SetValue(obj, buffer.ReadPrimitive(prop.PropertyType));
                     }
                     else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
