@@ -28,7 +28,7 @@ namespace CrunchySerialize
             {
                 ByteWriter writer = new();
                 _serializeIntoWriter(obj, writer, depth);
-                return writer.GetByteBuffer();
+                return writer.GetBuffer();
             }
 
             /// <summary>

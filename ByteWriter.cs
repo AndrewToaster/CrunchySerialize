@@ -40,6 +40,15 @@ namespace CrunchySerialize
         }
 
         /// <summary>
+        /// Writes a <see cref="byte"/> array into the internal buffer
+        /// </summary>
+        /// <param name="data"></param>
+        public void WriteArray(byte[] data)
+        {
+            _buffer.Write(data);
+        }
+
+        /// <summary>
         /// Writes a <see cref="byte"/> into the internal buffer
         /// </summary>
         /// <param name="val">The value to write into the internal buffer</param>
@@ -245,7 +254,7 @@ namespace CrunchySerialize
         /// Gets the internal buffer of this <see cref="ByteWriter"/>
         /// </summary>
         /// <returns>The internal buffer as a binary <see cref="ReadOnlySpan{T}"/></returns>
-        public ReadOnlySpan<byte> GetByteSpan()
+        public ReadOnlySpan<byte> GetSpan()
         {
             return _buffer.WrittenSpan;
         }
@@ -253,8 +262,26 @@ namespace CrunchySerialize
         /// <summary>
         /// Gets the internal buffer of this <see cref="ByteWriter"/>
         /// </summary>
+        /// <returns>The internal buffer as a binary <see cref="ReadOnlyMemory{T}"/></returns>
+        public ReadOnlyMemory<byte> GetMemory()
+        {
+            return _buffer.WrittenMemory;
+        }
+
+        /// <summary>
+        /// Gets the internal buffer of this <see cref="ByteWriter"/>
+        /// </summary>
+        /// <returns>The internal buffer as a <see cref="byte"/> array</returns>
+        public byte[] GetArray()
+        {
+            return _buffer.WrittenMemory.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the internal buffer of this <see cref="ByteWriter"/>
+        /// </summary>
         /// <returns>The internal buffer as <see cref="ByteBuffer"/></returns>
-        public ByteBuffer GetByteBuffer()
+        public ByteBuffer GetBuffer()
         {
             return new(_buffer.WrittenSpan);
         }

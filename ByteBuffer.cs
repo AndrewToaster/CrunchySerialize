@@ -13,9 +13,9 @@ namespace CrunchySerialize
         /// <summary>
         /// The amount of data inside this <see cref="ByteBuffer"/>
         /// </summary>
-        public int Length { get => _buffer.Memory.Length; }
+        public int Length { get; private set; }
 
-        private readonly IMemoryOwner<byte> _buffer;
+        public readonly IMemoryOwner<byte> _buffer;
         private int _position;
 
         /// <summary>
@@ -26,6 +26,18 @@ namespace CrunchySerialize
         {
             _buffer = MemoryPool<byte>.Shared.Rent(data.Length);
             data.ToArray().CopyTo(_buffer.Memory);
+            Length = data.Length;
+        }
+
+        /// <summary>
+        /// Create a new instance of <see cref="ByteBuffer"/> filled with <paramref name="data"/>
+        /// </summary>
+        /// <param name="data">The binary data to write into the buffer</param>
+        public ByteBuffer(ReadOnlyMemory<byte> data)
+        {
+            _buffer = MemoryPool<byte>.Shared.Rent(data.Length);
+            data.CopyTo(_buffer.Memory);
+            Length = data.Length;
         }
 
         /// <summary>
@@ -36,6 +48,7 @@ namespace CrunchySerialize
         {
             _buffer = MemoryPool<byte>.Shared.Rent(data.Length);
             data.CopyTo(_buffer.Memory);
+            Length = data.Length;
         }
 
         #region Read And Advance
@@ -117,7 +130,7 @@ namespace CrunchySerialize
         /// <summary>
         /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
         /// </summary>
-        public byte[] ReadByteArray(int lenght)
+        public byte[] ReadArray(int lenght)
         {
             byte[] data = _buffer.Memory.Slice(_position, lenght).ToArray();
             Advance(lenght);
@@ -127,7 +140,7 @@ namespace CrunchySerialize
         /// <summary>
         /// Reads a <see cref="byte"/> <see cref="ReadOnlySpan{T}"/> from this <see cref="ByteBuffer"/>
         /// </summary>
-        public ReadOnlySpan<byte> ReadByteSpan(int lenght)
+        public ReadOnlySpan<byte> ReadSpan(int lenght)
         {
             Span<byte> data = _buffer.Memory.Span.Slice(_position, lenght);
             Advance(lenght);
@@ -290,7 +303,7 @@ namespace CrunchySerialize
         /// <summary>
         /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
         /// </summary>
-        public byte[] PeekByteArray(int lenght)
+        public byte[] PeekArray(int lenght)
         {
             return _buffer.Memory.Slice(_position, lenght).ToArray();
         }
@@ -298,7 +311,7 @@ namespace CrunchySerialize
         /// <summary>
         /// Reads a <see cref="byte"/> <see cref="ReadOnlySpan{T}"/> from this <see cref="ByteBuffer"/>
         /// </summary>
-        public ReadOnlySpan<byte> PeekByteSpan(int lenght)
+        public ReadOnlySpan<byte> PeekSpan(int lenght)
         {
             return _buffer.Memory.Span.Slice(_position, lenght);
         }
@@ -453,18 +466,19 @@ namespace CrunchySerialize
         private void Advance(int amount)
         {
             _position += amount;
+            Length += amount;
         }
 
-        private Span<byte> ReadData(int amount)
+        private byte[] ReadData(int amount)
         {
-            var data = _buffer.Memory.Slice(_position, amount).Span;
+            var data = _buffer.Memory.Span.Slice(_position, amount).ToArray();
             Advance(amount);
             return data;
         }
 
-        private Span<byte> PeekData(int amount)
+        private byte[] PeekData(int amount)
         {
-            return _buffer.Memory.Slice(_position, amount).Span;
+            return _buffer.Memory.Span.Slice(_position, amount).ToArray();
         }
     }
 }

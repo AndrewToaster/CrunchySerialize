@@ -25,7 +25,7 @@ namespace CrunchySerialize
         {
             ByteWriter writer = new();
             obj.Serialize(writer);
-            return writer.GetByteBuffer();
+            return writer.GetBuffer();
         }
 
         /// <summary>
