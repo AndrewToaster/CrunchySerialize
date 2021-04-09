@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
@@ -153,17 +154,9 @@ namespace CrunchySerialize
         /// <param name="val">The value to write into the internal buffer</param>
         public void WriteString(string val)
         {
-            ReadOnlySpan<char> span = val.AsSpan();
-
-            if (span.IsEmpty)
-                return;
-
-            WriteInt(span.Length);
-
-            for (int i = 0; i < span.Length; i++)
-            {
-                WriteChar(span[i]);
-            }
+            byte[] data = Encoding.Default.GetBytes(val);
+            WriteInt(data.Length);
+            WriteArray(data);
         }
 
         /// <summary>
@@ -216,36 +209,84 @@ namespace CrunchySerialize
                     break;
 
                 case SerializableTypes.Enum:
-                    switch (ReflectionHelper.GetEnumType(type))
-                    {
-                        case IntegralTypes.Int:
-                            WriteInt((int)obj);
-                            break;
+                    WriteEnum((Enum)obj);
+                    break;
+            }
+        }
 
-                        case IntegralTypes.UInt:
-                            WriteUInt((uint)obj);
-                            break;
+        /// <summary>
+        /// Writes a <see cref="Enum"/> into the internal buffer
+        /// </summary>
+        /// <param name="val">The value to write into the internal buffer</param>
+        public void WriteEnum(Enum val)
+        {
+            switch (ReflectionHelper.GetEnumType(val.GetType().GetEnumUnderlyingType()))
+            {
+                case IntegralTypes.Int:
+                    WriteInt((int)(object)val);
+                    break;
 
-                        case IntegralTypes.Long:
-                            WriteLong((long)obj);
-                            break;
+                case IntegralTypes.UInt:
+                    WriteUInt((uint)(object)val);
+                    break;
 
-                        case IntegralTypes.ULong:
-                            WriteULong((ulong)obj);
-                            break;
+                case IntegralTypes.Long:
+                    WriteLong((long)(object)val);
+                    break;
 
-                        case IntegralTypes.Short:
-                            WriteShort((short)obj);
-                            break;
+                case IntegralTypes.ULong:
+                    WriteULong((ulong)(object)val);
+                    break;
 
-                        case IntegralTypes.UShort:
-                            WriteUShort((ushort)obj);
-                            break;
+                case IntegralTypes.Short:
+                    WriteShort((short)(object)val);
+                    break;
 
-                        case IntegralTypes.Byte:
-                            WriteByte((byte)obj);
-                            break;
-                    }
+                case IntegralTypes.UShort:
+                    WriteUShort((ushort)(object)val);
+                    break;
+
+                case IntegralTypes.Byte:
+                    WriteByte((byte)(object)val);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Writes a generic <see cref="Enum"/> <typeparamref name="T"/> into the internal buffer
+        /// </summary>
+        /// <param name="val">The value to write into the internal buffer</param>
+        /// <typeparam name="T">The generic enum</typeparam>
+        public void WriteEnum<T>(T val) where T : Enum
+        {
+            switch (ReflectionHelper.GetEnumType(typeof(T).GetEnumUnderlyingType()))
+            {
+                case IntegralTypes.Int:
+                    WriteInt((int)(object)val);
+                    break;
+
+                case IntegralTypes.UInt:
+                    WriteUInt((uint)(object)val);
+                    break;
+
+                case IntegralTypes.Long:
+                    WriteLong((long)(object)val);
+                    break;
+
+                case IntegralTypes.ULong:
+                    WriteULong((ulong)(object)val);
+                    break;
+
+                case IntegralTypes.Short:
+                    WriteShort((short)(object)val);
+                    break;
+
+                case IntegralTypes.UShort:
+                    WriteUShort((ushort)(object)val);
+                    break;
+
+                case IntegralTypes.Byte:
+                    WriteByte((byte)(object)val);
                     break;
             }
         }

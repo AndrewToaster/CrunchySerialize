@@ -17,6 +17,8 @@ namespace CrunchySerialize
         /// </summary>
         public static class Automatic
         {
+            private const string NULL_STR = "͖͋͛";
+
             /// <summary>
             /// Serializes a object into a <see cref="ByteBuffer"/>
             /// </summary>
@@ -85,7 +87,12 @@ namespace CrunchySerialize
                         continue;
 
                     object fieldValue = field.GetValue(obj);
-                    if (ReflectionHelper.IsSerializableType(field.FieldType))
+
+                    if (fieldValue == null)
+                    {
+                        writer.WriteString(NULL_STR);
+                    }
+                    else if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
                         writer.WritePrimitive(fieldValue);
                     }
@@ -104,7 +111,12 @@ namespace CrunchySerialize
                         continue;
 
                     object propValue = prop.GetValue(obj);
-                    if (ReflectionHelper.IsSerializableType(prop.PropertyType))
+
+                    if (propValue == null)
+                    {
+                        writer.WriteString(NULL_STR);
+                    }
+                    else if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
                         writer.WritePrimitive(propValue);
                     }
@@ -135,6 +147,12 @@ namespace CrunchySerialize
                     if (field.IsInitOnly || field.HasIgnore() || field.IsBackingField())
                         continue;
 
+                    if (buffer.PeekString() == NULL_STR)
+                    {
+                        buffer.ReadString();
+                        continue;
+                    }
+
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
                     {
                         field.SetValue(obj, buffer.ReadPrimitive(field.FieldType));
@@ -152,6 +170,12 @@ namespace CrunchySerialize
                 {
                     if (!prop.CanWrite || !prop.CanRead || prop.HasIgnore())
                         continue;
+
+                    if (buffer.PeekString() == NULL_STR)
+                    {
+                        buffer.ReadString();
+                        continue;
+                    }
 
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO.Compression;
+using System.Text;
 using CrunchySerialize.Utility;
 
 namespace CrunchySerialize
@@ -152,15 +153,7 @@ namespace CrunchySerialize
         /// </summary>
         public string ReadString()
         {
-            int len = ReadInt();
-            Span<char> span = stackalloc char[len];
-
-            for (int i = 0; i < len; i++)
-            {
-                span[i] = ReadChar();
-            }
-
-            return new string(span);
+            return Encoding.Default.GetString(ReadData(ReadInt()));
         }
 
         /// <summary>
@@ -169,17 +162,17 @@ namespace CrunchySerialize
         /// <typeparam name="T">The generic <see cref="Enum"/></typeparam>
         public T ReadEnum<T>() where T : Enum
         {
-            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            return (T)(object)(ReflectionHelper.GetEnumType(typeof(T)) switch
             {
-                IntegralTypes.Int => (T)(object)ReadInt(),
-                IntegralTypes.UInt => (T)(object)ReadUInt(),
-                IntegralTypes.Long => (T)(object)ReadLong(),
-                IntegralTypes.ULong => (T)(object)ReadULong(),
-                IntegralTypes.Short => (T)(object)ReadShort(),
-                IntegralTypes.UShort => (T)(object)ReadUShort(),
-                IntegralTypes.Byte => (T)(object)ReadByte(),
+                IntegralTypes.Int => ReadInt(),
+                IntegralTypes.UInt => ReadUInt(),
+                IntegralTypes.Long => ReadLong(),
+                IntegralTypes.ULong => ReadULong(),
+                IntegralTypes.Short => ReadShort(),
+                IntegralTypes.UShort => ReadUShort(),
+                IntegralTypes.Byte => ReadByte(),
                 _ => default,
-            };
+            });
         }
 
         /// <summary>
@@ -188,17 +181,17 @@ namespace CrunchySerialize
         /// <param name="type">The <see cref="Type"/> of the <see cref="Enum"/></param>
         public Enum ReadEnum(Type type)
         {
-            return ReflectionHelper.GetEnumType(type) switch
+            return (Enum)Enum.ToObject(type, ReflectionHelper.GetEnumType(type) switch
             {
-                IntegralTypes.Int => (Enum)(object)ReadInt(),
-                IntegralTypes.UInt => (Enum)(object)ReadUInt(),
-                IntegralTypes.Long => (Enum)(object)ReadLong(),
-                IntegralTypes.ULong => (Enum)(object)ReadULong(),
-                IntegralTypes.Short => (Enum)(object)ReadShort(),
-                IntegralTypes.UShort => (Enum)(object)ReadUShort(),
-                IntegralTypes.Byte => (Enum)(object)ReadByte(),
+                IntegralTypes.Int => ReadInt(),
+                IntegralTypes.UInt => ReadUInt(),
+                IntegralTypes.Long => ReadLong(),
+                IntegralTypes.ULong => ReadULong(),
+                IntegralTypes.Short => ReadShort(),
+                IntegralTypes.UShort => ReadUShort(),
+                IntegralTypes.Byte => ReadByte(),
                 _ => default,
-            };
+            });
         }
 
         /// <summary>
@@ -321,15 +314,7 @@ namespace CrunchySerialize
         /// </summary>
         public string PeekString()
         {
-            int len = PeekInt();
-            Span<char> span = stackalloc char[len];
-
-            for (int i = 0; i < len; i++)
-            {
-                span[i] = PeekChar();
-            }
-
-            return new string(span);
+            return Encoding.Default.GetString(PeekData(_position + sizeof(int), PeekInt()));
         }
 
         /// <summary>
@@ -338,17 +323,17 @@ namespace CrunchySerialize
         /// <typeparam name="T">The generic <see cref="Enum"/></typeparam>
         public T PeekEnum<T>() where T : Enum
         {
-            return ReflectionHelper.GetEnumType(typeof(T)) switch
+            return (T)(object)(ReflectionHelper.GetEnumType(typeof(T)) switch
             {
-                IntegralTypes.Int => (T)(object)PeekInt(),
-                IntegralTypes.UInt => (T)(object)PeekUInt(),
-                IntegralTypes.Long => (T)(object)PeekLong(),
-                IntegralTypes.ULong => (T)(object)PeekULong(),
-                IntegralTypes.Short => (T)(object)PeekShort(),
-                IntegralTypes.UShort => (T)(object)PeekUShort(),
-                IntegralTypes.Byte => (T)(object)PeekByte(),
+                IntegralTypes.Int => PeekInt(),
+                IntegralTypes.UInt => PeekUInt(),
+                IntegralTypes.Long => PeekLong(),
+                IntegralTypes.ULong => PeekULong(),
+                IntegralTypes.Short => PeekShort(),
+                IntegralTypes.UShort => PeekUShort(),
+                IntegralTypes.Byte => PeekByte(),
                 _ => default,
-            };
+            });
         }
 
         /// <summary>
@@ -357,17 +342,17 @@ namespace CrunchySerialize
         /// <param name="type">The <see cref="Type"/> of the <see cref="Enum"/></param>
         public Enum PeekEnum(Type type)
         {
-            return ReflectionHelper.GetEnumType(type) switch
+            return (Enum)Enum.ToObject(type, ReflectionHelper.GetEnumType(type) switch
             {
-                IntegralTypes.Int => (Enum)(object)PeekInt(),
-                IntegralTypes.UInt => (Enum)(object)PeekUInt(),
-                IntegralTypes.Long => (Enum)(object)PeekLong(),
-                IntegralTypes.ULong => (Enum)(object)PeekULong(),
-                IntegralTypes.Short => (Enum)(object)PeekShort(),
-                IntegralTypes.UShort => (Enum)(object)PeekUShort(),
-                IntegralTypes.Byte => (Enum)(object)PeekByte(),
+                IntegralTypes.Int => PeekInt(),
+                IntegralTypes.UInt => PeekUInt(),
+                IntegralTypes.Long => PeekLong(),
+                IntegralTypes.ULong => PeekULong(),
+                IntegralTypes.Short => PeekShort(),
+                IntegralTypes.UShort => PeekUShort(),
+                IntegralTypes.Byte => PeekByte(),
                 _ => default,
-            };
+            });
         }
 
         /// <summary>
@@ -469,11 +454,23 @@ namespace CrunchySerialize
             Length += amount;
         }
 
+        private byte[] ReadData(int offset, int amount)
+        {
+            var data = _buffer.Memory.Span.Slice(offset, amount).ToArray();
+            Advance(amount);
+            return data;
+        }
+
         private byte[] ReadData(int amount)
         {
             var data = _buffer.Memory.Span.Slice(_position, amount).ToArray();
             Advance(amount);
             return data;
+        }
+
+        private byte[] PeekData(int offset, int amount)
+        {
+            return _buffer.Memory.Span.Slice(offset, amount).ToArray();
         }
 
         private byte[] PeekData(int amount)
