@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CrunchySerialize.Attributes;
@@ -13,6 +14,11 @@ namespace CrunchySerialize.Utility
     /// </summary>
     public static class ReflectionHelper
     {
+        /// <summary>
+        /// The <see cref="BindingFlags"/> to get non-static members for serialization
+        /// </summary>
+        public static readonly BindingFlags SerializableFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
         private static readonly Dictionary<Type, SerializableTypes> TypeDictionary = new()
         {
             { typeof(int), SerializableTypes.Int },
@@ -80,6 +86,33 @@ namespace CrunchySerialize.Utility
         public static bool HasAttribute<T>(this Type type) where T : Attribute
         {
             return type.GetCustomAttribute<T>() != null;
+        }
+
+        /// <summary>
+        /// Checks whether or not the <paramref name="member"/> has a generic attribute
+        /// </summary>
+        /// <param name="member">The member to check against</param>
+        public static bool HasAttribute<T>(this MemberInfo member) where T : Attribute
+        {
+            return member.GetCustomAttribute<T>() != null;
+        }
+
+        /// <summary>
+        /// Checks whether or not the <paramref name="field"/> is a backing field of a auto-generated property
+        /// </summary>
+        /// <param name="field">The field to check against</param>
+        public static bool IsBackingField(this FieldInfo field)
+        {
+            return field.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
+        }
+
+        /// <summary>
+        /// Checks whether or not the <paramref name="member"/> has a <see cref="IgnoreMemberAttribute"/> and should be ignored
+        /// </summary>
+        /// <param name="member">The member to check against</param>
+        public static bool HasIgnore(this MemberInfo member)
+        {
+            return member.GetCustomAttribute<IgnoreMemberAttribute>() != null;
         }
 
         /// <summary>

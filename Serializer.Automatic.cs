@@ -79,9 +79,9 @@ namespace CrunchySerialize
                     return;
 
                 Type type = obj.GetType();
-                foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
+                foreach (var field in type.GetFields(ReflectionHelper.SerializableFlags).OrderBy(x => x.Name))
                 {
-                    if (field.IsInitOnly || field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                    if (field.IsInitOnly || field.HasIgnore() || field.IsBackingField())
                         continue;
 
                     object fieldValue = field.GetValue(obj);
@@ -98,9 +98,9 @@ namespace CrunchySerialize
                         _serializeIntoWriter(fieldValue, writer, depth - 1);
                     }
                 }
-                foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
+                foreach (var prop in type.GetProperties(ReflectionHelper.SerializableFlags).OrderBy(x => x.Name))
                 {
-                    if (!prop.CanWrite || !prop.CanRead || prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
+                    if (!prop.CanWrite || !prop.CanRead || prop.HasIgnore())
                         continue;
 
                     object propValue = prop.GetValue(obj);
@@ -130,9 +130,9 @@ namespace CrunchySerialize
                 if (hint == ConstructorHint.BeforeAssignment)
                     ReflectionHelper.InvokeDefaultConstructor(obj);
 
-                foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
+                foreach (var field in type.GetFields(ReflectionHelper.SerializableFlags).OrderBy(x => x.Name))
                 {
-                    if (field.IsInitOnly || field.FieldType.HasAttribute<IgnoreMemberAttribute>())
+                    if (field.IsInitOnly || field.HasIgnore() || field.IsBackingField())
                         continue;
 
                     if (ReflectionHelper.IsSerializableType(field.FieldType))
@@ -148,9 +148,9 @@ namespace CrunchySerialize
                         field.SetValue(obj, _deserializeFromBuffer(field.FieldType, buffer, depth - 1));
                     }
                 }
-                foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).OrderBy(x => x.Name))
+                foreach (var prop in type.GetProperties(ReflectionHelper.SerializableFlags).OrderBy(x => x.Name))
                 {
-                    if (!prop.CanWrite || !prop.CanRead || prop.PropertyType.HasAttribute<IgnoreMemberAttribute>())
+                    if (!prop.CanWrite || !prop.CanRead || prop.HasIgnore())
                         continue;
 
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
