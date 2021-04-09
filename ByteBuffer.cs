@@ -373,12 +373,40 @@ namespace CrunchySerialize
         /// </summary>
         /// <param name="level">The level of compression</param>
         /// <returns>Compressed binary <see cref="ReadOnlySpan{T}"/></returns>
-        public ReadOnlySpan<byte> CompressData(CompressionLevel level = CompressionLevel.Optimal)
+        public ReadOnlySpan<byte> CompressIntoSpan(CompressionLevel level = CompressionLevel.Optimal)
         {
             return CompressionHelper.Compress(_buffer.Memory.Span, level);
         }
 
+        /// <summary>
+        /// Compressed data from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <param name="level">The level of compression</param>
+        /// <returns>Compressed binary array</returns>
+        public byte[] CompressIntoArray(CompressionLevel level = CompressionLevel.Optimal)
+        {
+            return CompressionHelper.Compress(_buffer.Memory.ToArray(), level);
+        }
+
         #endregion Compression
+
+        /// <summary>
+        /// Gets the data from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <returns>Binary <see cref="ReadOnlySpan{T}"/></returns>
+        public ReadOnlySpan<byte> GetByteSpan()
+        {
+            return _buffer.Memory.Span;
+        }
+
+        /// <summary>
+        /// Gets the data from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <returns>Binary array</returns>
+        public byte[] GetByteArray()
+        {
+            return _buffer.Memory.ToArray();
+        }
 
         public void Dispose()
         {
