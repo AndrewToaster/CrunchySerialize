@@ -405,6 +405,19 @@ namespace CrunchySerialize
         /// Writes a primitive array into the internal buffer
         /// </summary>
         /// <param name="array">The primitive array</param>
+        public void WriteArray(string[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteString(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
         public void WriteArray(Enum[] array)
         {
             WriteInt(array.Length);

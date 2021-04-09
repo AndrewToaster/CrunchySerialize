@@ -126,18 +126,17 @@ namespace CrunchySerialize
         /// </summary>
         public byte ReadByte()
         {
-            byte data = _buffer.Memory.Span.Slice(_position, 1).ToArray()[0];
-            Advance(1);
+            byte data = ReadData(1)[0];
             return data;
         }
 
         /// <summary>
         /// Reads a <see cref="byte"/> <see cref="ReadOnlySpan{T}"/> from this <see cref="ByteBuffer"/>
         /// </summary>
-        public ReadOnlySpan<byte> ReadSpan(int lenght)
+        public ReadOnlySpan<byte> ReadSpan(int length)
         {
-            Span<byte> data = _buffer.Memory.Span.Slice(_position, lenght);
-            Advance(lenght);
+            Span<byte> data = _buffer.Memory.Span.Slice(_position, length);
+            Advance(length);
             return data;
         }
 
@@ -220,8 +219,17 @@ namespace CrunchySerialize
         /// <param name="length">The amount of bytes to read</param>
         public byte[] ReadArray(int length)
         {
-            byte[] data = _buffer.Memory.Slice(_position, length).ToArray();
-            Advance(length);
+            byte[] data = ReadData(length);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte[] ReadByteArray()
+        {
+            int len = ReadInt();
+            byte[] data = ReadData(len);
             return data;
         }
 
@@ -338,6 +346,20 @@ namespace CrunchySerialize
         }
 
         /// <summary>
+        /// Reads a <see cref="string"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public string[] ReadStringArray()
+        {
+            string[] array = new string[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadString();
+            }
+            return array;
+        }
+
+        /// <summary>
         /// Reads a <see cref="Enum"/> array from this <see cref="ByteBuffer"/>
         /// </summary>
         /// <param name="type">The type of the <see cref="Enum"/></param>
@@ -444,7 +466,7 @@ namespace CrunchySerialize
         /// </summary>
         public byte PeekByte()
         {
-            return _buffer.Memory.Span.Slice(_position, 1).ToArray()[0];
+            return PeekData(1)[0];
         }
 
         /// <summary>
@@ -534,9 +556,16 @@ namespace CrunchySerialize
         /// <param name="length">The amount of bytes to peek</param>
         public byte[] PeekArray(int length)
         {
-            byte[] data = _buffer.Memory.Slice(_position, length).ToArray();
-            Advance(length);
-            return data;
+            return PeekData(length);
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte[] PeekByteArray()
+        {
+            int len = PeekInt();
+            return PeekData(_position + sizeof(int), len);
         }
 
         /// <summary>
@@ -652,6 +681,20 @@ namespace CrunchySerialize
         }
 
         /// <summary>
+        /// Peeks a <see cref="string"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public string[] PeekStringArray()
+        {
+            string[] array = new string[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = Encoding.Default.GetString(PeekData(i * sizeof(bool), sizeof(bool)));
+            }
+            return array;
+        }
+
+        /// <summary>
         /// Peeks a <see cref="Enum"/> array from this <see cref="ByteBuffer"/>
         /// </summary>
         /// <param name="type">The type of the <see cref="Enum"/></param>
@@ -670,7 +713,7 @@ namespace CrunchySerialize
                     IntegralTypes.ULong => BitConverter.ToUInt64(PeekData(i * sizeof(ulong), sizeof(ulong))),
                     IntegralTypes.Short => BitConverter.ToInt16(PeekData(i * sizeof(short), sizeof(short))),
                     IntegralTypes.UShort => BitConverter.ToUInt16(PeekData(i * sizeof(ushort), sizeof(ushort))),
-                    IntegralTypes.Byte => _buffer.Memory.Span.Slice(i, 1).ToArray()[0],
+                    IntegralTypes.Byte => PeekData(i, 1)[0],
                     _ => default,
                 });
             }
@@ -684,10 +727,22 @@ namespace CrunchySerialize
         public TEnum[] PeekEnumArray<TEnum>() where TEnum : Enum
         {
             TEnum[] array = new TEnum[ReadInt()];
+            Type type = typeof(TEnum);
+            IntegralTypes baseType = ReflectionHelper.GetEnumType(type);
 
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = ReadEnum<TEnum>();
+                array[i] = (TEnum)Enum.ToObject(type, baseType switch
+                {
+                    IntegralTypes.Int => BitConverter.ToInt32(PeekData(i * sizeof(int), sizeof(int))),
+                    IntegralTypes.UInt => BitConverter.ToUInt32(PeekData(i * sizeof(uint), sizeof(uint))),
+                    IntegralTypes.Long => BitConverter.ToInt64(PeekData(i * sizeof(long), sizeof(long))),
+                    IntegralTypes.ULong => BitConverter.ToUInt64(PeekData(i * sizeof(ulong), sizeof(ulong))),
+                    IntegralTypes.Short => BitConverter.ToInt16(PeekData(i * sizeof(short), sizeof(short))),
+                    IntegralTypes.UShort => BitConverter.ToUInt16(PeekData(i * sizeof(ushort), sizeof(ushort))),
+                    IntegralTypes.Byte => PeekData(i, 1)[0],
+                    _ => default,
+                });
             }
             return array;
         }

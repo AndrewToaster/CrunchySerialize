@@ -96,6 +96,55 @@ namespace CrunchySerialize
                     {
                         writer.WritePrimitive(fieldValue);
                     }
+                    else if (field.FieldType.IsSZArray)
+                    {
+                        switch (ReflectionHelper.GetSerializableType(field.FieldType.GetElementType()))
+                        {
+                            case SerializableTypes.Int:
+                                writer.WriteArray((int[])fieldValue);
+                                break;
+
+                            case SerializableTypes.UInt:
+                                writer.WriteArray((uint[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Long:
+                                writer.WriteArray((long[])fieldValue);
+                                break;
+
+                            case SerializableTypes.ULong:
+                                writer.WriteArray((ulong[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Short:
+                                writer.WriteArray((short[])fieldValue);
+                                break;
+
+                            case SerializableTypes.UShort:
+                                writer.WriteArray((ushort[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Byte:
+                                writer.WriteArray((byte[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Char:
+                                writer.WriteArray((int[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Bool:
+                                writer.WriteArray((bool[])fieldValue);
+                                break;
+
+                            case SerializableTypes.String:
+                                writer.WriteArray((string[])fieldValue);
+                                break;
+
+                            case SerializableTypes.Enum:
+                                writer.WriteArray((Enum[])fieldValue);
+                                break;
+                        }
+                    }
                     else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
                         ((ISerializable)fieldValue).Serialize(writer);
@@ -119,6 +168,55 @@ namespace CrunchySerialize
                     else if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
                         writer.WritePrimitive(propValue);
+                    }
+                    else if (prop.PropertyType.IsSZArray)
+                    {
+                        switch (ReflectionHelper.GetSerializableType(prop.PropertyType.GetElementType()))
+                        {
+                            case SerializableTypes.Int:
+                                writer.WriteArray((int[])propValue);
+                                break;
+
+                            case SerializableTypes.UInt:
+                                writer.WriteArray((uint[])propValue);
+                                break;
+
+                            case SerializableTypes.Long:
+                                writer.WriteArray((long[])propValue);
+                                break;
+
+                            case SerializableTypes.ULong:
+                                writer.WriteArray((ulong[])propValue);
+                                break;
+
+                            case SerializableTypes.Short:
+                                writer.WriteArray((short[])propValue);
+                                break;
+
+                            case SerializableTypes.UShort:
+                                writer.WriteArray((ushort[])propValue);
+                                break;
+
+                            case SerializableTypes.Byte:
+                                writer.WriteArray((byte[])propValue);
+                                break;
+
+                            case SerializableTypes.Char:
+                                writer.WriteArray((int[])propValue);
+                                break;
+
+                            case SerializableTypes.Bool:
+                                writer.WriteArray((bool[])propValue);
+                                break;
+
+                            case SerializableTypes.String:
+                                writer.WriteArray((string[])propValue);
+                                break;
+
+                            case SerializableTypes.Enum:
+                                writer.WriteArray((Enum[])propValue);
+                                break;
+                        }
                     }
                     else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
@@ -157,6 +255,55 @@ namespace CrunchySerialize
                     {
                         field.SetValue(obj, buffer.ReadPrimitive(field.FieldType));
                     }
+                    else if (field.FieldType.IsSZArray)
+                    {
+                        switch (ReflectionHelper.GetSerializableType(field.FieldType.GetElementType()))
+                        {
+                            case SerializableTypes.Int:
+                                field.SetValue(obj, buffer.ReadIntArray());
+                                break;
+
+                            case SerializableTypes.UInt:
+                                field.SetValue(obj, buffer.ReadUIntArray());
+                                break;
+
+                            case SerializableTypes.Long:
+                                field.SetValue(obj, buffer.ReadLongArray());
+                                break;
+
+                            case SerializableTypes.ULong:
+                                field.SetValue(obj, buffer.ReadULongArray());
+                                break;
+
+                            case SerializableTypes.Short:
+                                field.SetValue(obj, buffer.ReadShortArray());
+                                break;
+
+                            case SerializableTypes.UShort:
+                                field.SetValue(obj, buffer.ReadUShortArray());
+                                break;
+
+                            case SerializableTypes.Byte:
+                                field.SetValue(obj, buffer.ReadByteArray());
+                                break;
+
+                            case SerializableTypes.Char:
+                                field.SetValue(obj, buffer.ReadCharArray());
+                                break;
+
+                            case SerializableTypes.Bool:
+                                field.SetValue(obj, buffer.ReadBoolArray());
+                                break;
+
+                            case SerializableTypes.String:
+                                field.SetValue(obj, buffer.ReadStringArray());
+                                break;
+
+                            case SerializableTypes.Enum:
+                                field.SetValue(obj, buffer.ReadEnumArray(field.FieldType.GetElementType()));
+                                break;
+                        }
+                    }
                     else if (ReflectionHelper.ImplementsISerializable(field.FieldType))
                     {
                         ((ISerializable)field.GetValue(obj)).Deserialize(buffer);
@@ -180,6 +327,55 @@ namespace CrunchySerialize
                     if (ReflectionHelper.IsSerializableType(prop.PropertyType))
                     {
                         prop.SetValue(obj, buffer.ReadPrimitive(prop.PropertyType));
+                    }
+                    else if (prop.PropertyType.IsSZArray)
+                    {
+                        switch (ReflectionHelper.GetSerializableType(prop.PropertyType.GetElementType()))
+                        {
+                            case SerializableTypes.Int:
+                                prop.SetValue(obj, buffer.ReadIntArray());
+                                break;
+
+                            case SerializableTypes.UInt:
+                                prop.SetValue(obj, buffer.ReadUIntArray());
+                                break;
+
+                            case SerializableTypes.Long:
+                                prop.SetValue(obj, buffer.ReadLongArray());
+                                break;
+
+                            case SerializableTypes.ULong:
+                                prop.SetValue(obj, buffer.ReadULongArray());
+                                break;
+
+                            case SerializableTypes.Short:
+                                prop.SetValue(obj, buffer.ReadShortArray());
+                                break;
+
+                            case SerializableTypes.UShort:
+                                prop.SetValue(obj, buffer.ReadUShortArray());
+                                break;
+
+                            case SerializableTypes.Byte:
+                                prop.SetValue(obj, buffer.ReadByteArray());
+                                break;
+
+                            case SerializableTypes.Char:
+                                prop.SetValue(obj, buffer.ReadCharArray());
+                                break;
+
+                            case SerializableTypes.Bool:
+                                prop.SetValue(obj, buffer.ReadBoolArray());
+                                break;
+
+                            case SerializableTypes.String:
+                                prop.SetValue(obj, buffer.ReadStringArray());
+                                break;
+
+                            case SerializableTypes.Enum:
+                                prop.SetValue(obj, buffer.ReadEnumArray(prop.PropertyType.GetElementType()));
+                                break;
+                        }
                     }
                     else if (ReflectionHelper.ImplementsISerializable(prop.PropertyType))
                     {
