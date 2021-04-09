@@ -17,7 +17,7 @@ namespace CrunchySerialize
         /// </summary>
         public static class Automatic
         {
-            private const string NULL_STR = "͖͋͛";
+            private const string NULL_STR = "\u034B\u0356\u035B";
 
             /// <summary>
             /// Serializes a object into a <see cref="ByteBuffer"/>
