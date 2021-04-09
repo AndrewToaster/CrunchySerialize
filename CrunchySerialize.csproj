@@ -9,12 +9,13 @@
     <RepositoryUrl>https://github.com/AndrewToaster/CrunchySerialize</RepositoryUrl>
     <RepositoryType>Source</RepositoryType>
     <PackageTags>c#,AndrewToasterr,Serialization,Lightweight</PackageTags>
-    <PackageReleaseNotes>Improved Serializer.Automatic</PackageReleaseNotes>
+    <PackageReleaseNotes>Improved Performance
+Added more access for getting binary data</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.1.0.5</Version>
-    <AssemblyVersion>1.1.0.5</AssemblyVersion>
+    <Version>1.1.0.6</Version>
+    <AssemblyVersion>1.1.0.6</AssemblyVersion>
     <PackageIcon>Icon.png</PackageIcon>
-    <FileVersion>1.1.0.5</FileVersion>
+    <FileVersion>1.1.0.6</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
