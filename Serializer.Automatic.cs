@@ -129,7 +129,7 @@ namespace CrunchySerialize
                                 break;
 
                             case SerializableTypes.Char:
-                                writer.WriteArray((int[])fieldValue);
+                                writer.WriteArray((char[])fieldValue);
                                 break;
 
                             case SerializableTypes.Bool:
