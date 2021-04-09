@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using System.Text;
 using CrunchySerialize.Utility;
 
@@ -53,6 +54,8 @@ namespace CrunchySerialize
         }
 
         #region Read And Advance
+
+        #region Single Value
 
         /// <summary>
         /// Reads a <see cref="int"/> from this <see cref="ByteBuffer"/>
@@ -123,18 +126,8 @@ namespace CrunchySerialize
         /// </summary>
         public byte ReadByte()
         {
-            byte data = _buffer.Memory.Slice(_position, 1).ToArray()[0];
+            byte data = _buffer.Memory.Span.Slice(_position, 1).ToArray()[0];
             Advance(1);
-            return data;
-        }
-
-        /// <summary>
-        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
-        /// </summary>
-        public byte[] ReadArray(int lenght)
-        {
-            byte[] data = _buffer.Memory.Slice(_position, lenght).ToArray();
-            Advance(lenght);
             return data;
         }
 
@@ -217,9 +210,170 @@ namespace CrunchySerialize
             };
         }
 
+        #endregion Single Value
+
+        #region Arrays
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> array with given length from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <param name="length">The amount of bytes to read</param>
+        public byte[] ReadArray(int length)
+        {
+            byte[] data = _buffer.Memory.Slice(_position, length).ToArray();
+            Advance(length);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="int"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public int[] ReadIntArray()
+        {
+            int[] array = new int[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadInt();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="uint"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public uint[] ReadUIntArray()
+        {
+            uint[] array = new uint[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadUInt();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="long"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public long[] ReadLongArray()
+        {
+            long[] array = new long[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadLong();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="ulong"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ulong[] ReadULongArray()
+        {
+            ulong[] array = new ulong[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadULong();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="short"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public short[] ReadShortArray()
+        {
+            short[] array = new short[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadShort();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="ushort"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ushort[] ReadUShortArray()
+        {
+            ushort[] array = new ushort[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadUShort();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="char"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public char[] ReadCharArray()
+        {
+            char[] array = new char[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadChar();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="bool"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public bool[] ReadBoolArray()
+        {
+            bool[] array = new bool[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadBool();
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Enum"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <param name="type">The type of the <see cref="Enum"/></param>
+        public Enum[] ReadEnumArray(Type type)
+        {
+            Enum[] array = new Enum[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadEnum(type);
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a generic <see cref="Enum"/> <typeparamref name="TEnum"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the <see cref="Enum"/></typeparam>
+        public TEnum[] ReadEnumArray<TEnum>() where TEnum : Enum
+        {
+            TEnum[] array = new TEnum[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadEnum<TEnum>();
+            }
+            return array;
+        }
+
+        #endregion Arrays
+
         #endregion Read And Advance
 
         #region Peek and Stay
+
+        #region Single Values
 
         /// <summary>
         /// Peeks a <see cref="int"/> from this <see cref="ByteBuffer"/>
@@ -290,15 +444,7 @@ namespace CrunchySerialize
         /// </summary>
         public byte PeekByte()
         {
-            return _buffer.Memory.Slice(_position, 1).ToArray()[0];
-        }
-
-        /// <summary>
-        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
-        /// </summary>
-        public byte[] PeekArray(int lenght)
-        {
-            return _buffer.Memory.Slice(_position, lenght).ToArray();
+            return _buffer.Memory.Span.Slice(_position, 1).ToArray()[0];
         }
 
         /// <summary>
@@ -378,6 +524,176 @@ namespace CrunchySerialize
             };
         }
 
+        #endregion Single Values
+
+        #region Arrays
+
+        /// <summary>
+        /// Peeks a <see cref="byte"/> array with given length from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <param name="length">The amount of bytes to peek</param>
+        public byte[] PeekArray(int length)
+        {
+            byte[] data = _buffer.Memory.Slice(_position, length).ToArray();
+            Advance(length);
+            return data;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="int"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public int[] PeekIntArray()
+        {
+            int[] array = new int[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToInt32(PeekData(i * sizeof(int), sizeof(int)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="uint"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public uint[] PeekUIntArray()
+        {
+            uint[] array = new uint[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToUInt32(PeekData(i * sizeof(uint), sizeof(uint)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="long"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public long[] PeekLongArray()
+        {
+            long[] array = new long[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToInt64(PeekData(i * sizeof(long), sizeof(long)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="ulong"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ulong[] PeekULongArray()
+        {
+            ulong[] array = new ulong[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToUInt64(PeekData(i * sizeof(ulong), sizeof(ulong)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="short"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public short[] PeekShortArray()
+        {
+            short[] array = new short[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToInt16(PeekData(i * sizeof(short), sizeof(short)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="ushort"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ushort[] PeekUShortArray()
+        {
+            ushort[] array = new ushort[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToUInt16(PeekData(i * sizeof(ushort), sizeof(ushort)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="char"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public char[] PeekCharArray()
+        {
+            char[] array = new char[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToChar(PeekData(i * sizeof(char), sizeof(char)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="bool"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public bool[] PeekBoolArray()
+        {
+            bool[] array = new bool[PeekInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = BitConverter.ToBoolean(PeekData(i * sizeof(bool), sizeof(bool)));
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="Enum"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <param name="type">The type of the <see cref="Enum"/></param>
+        public Enum[] PeekEnumArray(Type type)
+        {
+            Enum[] array = new Enum[PeekInt()];
+            IntegralTypes baseType = ReflectionHelper.GetEnumType(type);
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = (Enum)Enum.ToObject(type, baseType switch
+                {
+                    IntegralTypes.Int => BitConverter.ToInt32(PeekData(i * sizeof(int), sizeof(int))),
+                    IntegralTypes.UInt => BitConverter.ToUInt32(PeekData(i * sizeof(uint), sizeof(uint))),
+                    IntegralTypes.Long => BitConverter.ToInt64(PeekData(i * sizeof(long), sizeof(long))),
+                    IntegralTypes.ULong => BitConverter.ToUInt64(PeekData(i * sizeof(ulong), sizeof(ulong))),
+                    IntegralTypes.Short => BitConverter.ToInt16(PeekData(i * sizeof(short), sizeof(short))),
+                    IntegralTypes.UShort => BitConverter.ToUInt16(PeekData(i * sizeof(ushort), sizeof(ushort))),
+                    IntegralTypes.Byte => _buffer.Memory.Span.Slice(i, 1).ToArray()[0],
+                    _ => default,
+                });
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Reads a generic <see cref="Enum"/> <typeparamref name="TEnum"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the <see cref="Enum"/></typeparam>
+        public TEnum[] PeekEnumArray<TEnum>() where TEnum : Enum
+        {
+            TEnum[] array = new TEnum[ReadInt()];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = ReadEnum<TEnum>();
+            }
+            return array;
+        }
+
+        #endregion Arrays
+
         #endregion Peek and Stay
 
         #region Compression
@@ -452,13 +768,6 @@ namespace CrunchySerialize
         {
             _position += amount;
             Length += amount;
-        }
-
-        private byte[] ReadData(int offset, int amount)
-        {
-            var data = _buffer.Memory.Span.Slice(offset, amount).ToArray();
-            Advance(amount);
-            return data;
         }
 
         private byte[] ReadData(int amount)

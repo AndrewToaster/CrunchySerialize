@@ -31,20 +31,13 @@ namespace CrunchySerialize
             _buffer.Write(data);
         }
 
+        #region Single Values
+
         /// <summary>
         /// Writes a binary <see cref="ReadOnlySpan{T}"/> into the internal buffer
         /// </summary>
         /// <param name="data"></param>
         public void WriteSpan(ReadOnlySpan<byte> data)
-        {
-            _buffer.Write(data);
-        }
-
-        /// <summary>
-        /// Writes a <see cref="byte"/> array into the internal buffer
-        /// </summary>
-        /// <param name="data"></param>
-        public void WriteArray(byte[] data)
         {
             _buffer.Write(data);
         }
@@ -290,6 +283,151 @@ namespace CrunchySerialize
                     break;
             }
         }
+
+        #endregion Single Values
+
+        #region Arrays
+
+        /// <summary>
+        /// Writes a <see cref="byte"/> array into the internal buffer
+        /// </summary>
+        /// <param name="data"></param>
+        public void WriteArray(byte[] data)
+        {
+            _buffer.Write(data);
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(int[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteInt(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(uint[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteUInt(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(long[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteLong(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(ulong[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteULong(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(short[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteShort(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(ushort[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteUShort(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(char[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteChar(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(bool[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteBool(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray(Enum[] array)
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteEnum(array[i]);
+            }
+        }
+
+        /// <summary>
+        /// Writes a primitive array into the internal buffer
+        /// </summary>
+        /// <param name="array">The primitive array</param>
+        public void WriteArray<TEnum>(TEnum[] array) where TEnum : Enum
+        {
+            WriteInt(array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                WriteEnum(array[i]);
+            }
+        }
+
+        #endregion Arrays
 
         /// <summary>
         /// Gets the internal buffer of this <see cref="ByteWriter"/>
