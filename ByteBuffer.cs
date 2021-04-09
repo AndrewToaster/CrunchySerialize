@@ -89,16 +89,6 @@ namespace CrunchySerialize
         }
 
         /// <summary>
-        /// Reads a <see cref="byte"/> from this <see cref="ByteBuffer"/>
-        /// </summary>
-        public byte ReadByte()
-        {
-            byte data = _buffer.Memory.Span[_position];
-            Advance(1);
-            return data;
-        }
-
-        /// <summary>
         /// Reads a <see cref="char"/> from this <see cref="ByteBuffer"/>
         /// </summary>
         public char ReadChar()
@@ -112,6 +102,36 @@ namespace CrunchySerialize
         public bool ReadBool()
         {
             return BitConverter.ToBoolean(ReadData(sizeof(bool)));
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte ReadByte()
+        {
+            byte data = _buffer.Memory.Slice(_position, 1).ToArray()[0];
+            Advance(1);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte[] ReadByteArray(int lenght)
+        {
+            byte[] data = _buffer.Memory.Slice(_position, lenght).ToArray();
+            Advance(lenght);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> <see cref="ReadOnlySpan{T}"/> from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ReadOnlySpan<byte> ReadByteSpan(int lenght)
+        {
+            Span<byte> data = _buffer.Memory.Span.Slice(_position, lenght);
+            Advance(lenght);
+            return data;
         }
 
         /// <summary>
@@ -244,14 +264,6 @@ namespace CrunchySerialize
         }
 
         /// <summary>
-        /// Peeks a <see cref="byte"/> from this <see cref="ByteBuffer"/>
-        /// </summary>
-        public byte PeekByte()
-        {
-            return _buffer.Memory.Span[_position];
-        }
-
-        /// <summary>
         /// Peeks a <see cref="char"/> from this <see cref="ByteBuffer"/>
         /// </summary>
         public char PeekChar()
@@ -265,6 +277,30 @@ namespace CrunchySerialize
         public bool PeekBool()
         {
             return BitConverter.ToBoolean(PeekData(sizeof(bool)));
+        }
+
+        /// <summary>
+        /// Peeks a <see cref="byte"/> from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte PeekByte()
+        {
+            return _buffer.Memory.Slice(_position, 1).ToArray()[0];
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> array from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public byte[] PeekByteArray(int lenght)
+        {
+            return _buffer.Memory.Slice(_position, lenght).ToArray();
+        }
+
+        /// <summary>
+        /// Reads a <see cref="byte"/> <see cref="ReadOnlySpan{T}"/> from this <see cref="ByteBuffer"/>
+        /// </summary>
+        public ReadOnlySpan<byte> PeekByteSpan(int lenght)
+        {
+            return _buffer.Memory.Span.Slice(_position, lenght);
         }
 
         /// <summary>
