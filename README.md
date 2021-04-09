@@ -73,8 +73,17 @@ This means that if the type is either a Primitive, Enum or String then we go ahe
 If the type implements `ISerializable` then we call `ISerializable.Serialize`
 
 ### None of the above
-If none of these are reached, then we serialize all fields and properites in the type depending on the given `depth` parameter.
+If none of these are reached, then we serialize all fields and properties in the type depending on the given `depth` parameter.
 This is recursively done.
 
 ### Exceptions
 If the field / property has the `[IgnoreMember]` attribute, then we just skip it
+
+# Known Limitations
+
+## Binary Serialization
+None yet found, YAY
+
+## Reflection Serialization
+### Array Dimensions
+Currently only Single-Dimension (SZ) arrays are implemented
