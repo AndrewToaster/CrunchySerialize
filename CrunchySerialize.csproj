@@ -11,8 +11,8 @@
     <PackageTags>c#,AndrewToasterr,Serialization,Lightweight</PackageTags>
     <PackageReleaseNotes>Add more methods in Serializer</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.1.0.3</Version>
-    <AssemblyVersion>1.1.0.3</AssemblyVersion>
+    <Version>1.1.0.4</Version>
+    <AssemblyVersion>1.1.0.4</AssemblyVersion>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
 
