@@ -32,11 +32,11 @@ public class StringData : ISerializable
 ```
 Then calling
 ```csharp
-ByteBuffer data = Serializator.Serialize(new StringData("Hello, World!"));
+ByteBuffer data = Serializer.Serialize(new StringData("Hello, World!"));
 ```
 And deserializing
 ```csharp
-StringData stringData = Serializator.Deserialize<StringData>(data);
+StringData stringData = Serializer.Deserialize<StringData>(data);
 ```
 
 ## Using Reflection-based Automatic Serialization
@@ -56,11 +56,11 @@ public class IntData
 ```
 Then calling
 ```csharp
-ByteBuffer data = Serializator.Automatic.Serialize(new IntData(69420));
+ByteBuffer data = Serializer.Automatic.Serialize(new IntData(69420));
 ```
 And deserializing
 ```csharp
-IntData intData = Serializator.Automatic.Deserialize<IntData>(data);
+IntData intData = Serializer.Automatic.Deserialize<IntData>(data);
 ```
 
 ## How it works
