@@ -801,7 +801,7 @@ namespace CrunchySerialize
         /// <returns>Binary <see cref="ReadOnlySpan{T}"/></returns>
         public ReadOnlySpan<byte> GetByteSpan()
         {
-            return _buffer.Memory.Span;
+            return _buffer.Memory.Span.Slice(0, Length);
         }
 
         /// <summary>
@@ -810,7 +810,7 @@ namespace CrunchySerialize
         /// <returns>Binary array</returns>
         public byte[] GetByteArray()
         {
-            return _buffer.Memory.ToArray();
+            return PeekData(0, Length);
         }
 
         public void Dispose()
