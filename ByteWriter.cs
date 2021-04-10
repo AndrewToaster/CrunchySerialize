@@ -149,7 +149,7 @@ namespace CrunchySerialize
         {
             byte[] data = Encoding.Default.GetBytes(val);
             WriteInt(data.Length);
-            WriteArray(data);
+            WriteBytes(data);
         }
 
         /// <summary>
@@ -292,8 +292,18 @@ namespace CrunchySerialize
         /// Writes a <see cref="byte"/> array into the internal buffer
         /// </summary>
         /// <param name="data"></param>
+        public void WriteBytes(byte[] data)
+        {
+            _buffer.Write(data);
+        }
+
+        /// <summary>
+        /// Writes a <see cref="byte"/> array into the internal buffer
+        /// </summary>
+        /// <param name="data"></param>
         public void WriteArray(byte[] data)
         {
+            WriteInt(data.Length);
             _buffer.Write(data);
         }
 
